@@ -37,16 +37,19 @@ public class SalvoController {
 
         mapId.put("id",game.getId());
         mapId.put("created",game.getDate());
-        mapId.put("gamePlayers",game.getPlayers().stream().map(player -> getAll(player).collect(collectingAndThen())));
+        mapId.put("gamePlayers",game.getPlayers()
+                .stream().
+                        map(Player -> getAll(Player))
+                                .collect(toList()));
         return mapId;
     }
 
 
 
-    private Map<String, Object> getAll(GamePlayer gamePlayerlayer) {
+    private Map<String, Object> getAll(Player Player) {
         Map<String, Object>  mapId = new LinkedHashMap<>();
-        mapId.put("id", gamePlayer.getId());
-        mapId.put("email", .getUserName());
+        mapId.put("id", Player.getId());
+        mapId.put("email", Player.getUserName());
         return mapId;
     }
 

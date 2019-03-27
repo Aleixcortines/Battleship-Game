@@ -21,7 +21,7 @@ public class Player {
 
     public Player(){}
 
-    public Player (Long id,String name, String lastName, String userName){
+    public Player (String name, String lastName, String userName){
         this.id=id;
         this.name= name;
         this.lastName=lastName;

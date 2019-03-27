@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salvo!</title>
+</head>
+<body>
+
+<div id="app">
+
+    <div v-if="gameData.length > 0">
+    <ol>
+
+
+         <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].email}} vs Fuck off you're waiting for a player </li>
+         <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].email}} vs {{game.gamePlayers[1].email}} </li>
+
+    </ol>
+    </div>
+</div>
+
+
+<!--Vue script-->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- Vue resource-->
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<!--My own script-->
+<script src="games.js"></script>
+
+</body>
+</html>

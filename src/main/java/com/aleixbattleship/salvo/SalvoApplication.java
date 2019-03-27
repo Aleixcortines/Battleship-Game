@@ -25,7 +25,7 @@ public class SalvoApplication {
 			playerRepository.save(p2);
 			Player p3=new Player("Kim", "Bauer","kim_bauer@gmail.com");
 			playerRepository.save(p3);
-
+			//Create games
 			Game g1 = new Game(LocalDateTime.now());
 			gameRepository.save(g1);
 			Game g2= new Game (LocalDateTime.now().plusHours(1));
@@ -33,13 +33,17 @@ public class SalvoApplication {
 			Game g3= new Game(LocalDateTime.now().plusHours(2));
 			gameRepository.save(g3);
 
-
+			//create gamePlayers
 			GamePlayer gp1 = new GamePlayer(g1, p1);
 			gamePlayerRepository.save(gp1);
 			GamePlayer gp2 = new GamePlayer(g2, p2);
 			gamePlayerRepository.save(gp2);
 			GamePlayer gp3 = new GamePlayer(g3, p3);
 			gamePlayerRepository.save(gp3);
+			GamePlayer gp4 = new GamePlayer(g1, p2);
+			gamePlayerRepository.save(gp4);
+
+			Ship s1 =new Ship("Carrier","H2,H3,H4");
 
 
 		};
