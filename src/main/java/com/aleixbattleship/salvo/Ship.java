@@ -58,6 +58,9 @@ public class Ship {
         return gamePlayer;
     }
 
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;    }
+
     @Override
     public String toString() {
         return "Ship{" +
@@ -67,4 +70,5 @@ public class Ship {
                 ", gamePlayer=" + gamePlayer +
                 '}';
     }
+
 }
