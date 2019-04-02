@@ -82,7 +82,7 @@ public class SalvoController {
 
         gameInfo.put("id",gamePlayer.getGame().getId());
         gameInfo.put("created",gamePlayer.getGame().getDate());
-        gameInfo.put("Game Player",gamePlayer.getGame().getGamePlayers()
+        gameInfo.put("GamePlayer",gamePlayer.getGame().getGamePlayers()
                 .stream()
                 .map(gp -> getGPInfo(gp))
                 .collect(toList()));
