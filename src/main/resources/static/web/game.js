@@ -1,16 +1,25 @@
-var app = new Vue({
+let app = new Vue({
     el: "#app",
     mounted() {
-        this.populateTable()
+        this.populateTable();
+        this.getID();
+        this.getData();
+
     },
 
     data: {
+        //variable to take the link
+        url: new URL(window.location.href),
+        gamePlayers: [],
         games: [],
+        ships: [],
+        gameDat:[],
     },
 
     methods: {
         getData() {
-            let url = "http://localhost:8080/api/games";
+
+            let url = "http://localhost:8080/api/game_view/" + this.gamePlayers;
 
             fetch(url, {
                     mode: "cors"
@@ -19,9 +28,31 @@ var app = new Vue({
                     return response.json()
                 })
                 .then(function (gameJson) {
-                    salvo.games = gameJson
+                
+                    app.gameDat=gameJson;
+
+                    app.games = gameJson.game.GamePlayer;
+
+                    app.ships = gameJson.game.Ships;
+
+                    app.printShipsGrid();
+
+                    app.gameVs();
+
+
                 })
                 .catch(error => console.log(error))
+        },
+        //function to take de gamePlayers ID
+        getID() {
+
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars = value;
+                //Value + Key = vars[key]=....
+            });
+
+            this.gamePlayers = vars;
         },
 
         populateTable() {
@@ -68,11 +99,61 @@ var app = new Vue({
             // tr bind to tbody
             //tbody bind to table
             // and now, we are pushing the table to the body , which is the ID of the div in HTMl page
+        },
+        //function to print the ships on the grid
+        printShipsGrid() {
+
+            for (var i = 0; i < this.ships.length; i++) {
+
+                var locations = this.ships[i].Location;
+
+                for (var j = 0; j < locations.length; j++) {
+
+                    document.getElementById(locations[j]).style.backgroundColor = '#451d00';
+
+                }
+            }
+
+        },
+        
+        gameVs(){
+            
+            let playersGameId= document.getElementById("playersGame");
+            
+            if (this.gameDat.game.GamePlayer.length == 1){
+                
+                
+                let playerOne = this.gameDat.game.GamePlayer[0].player.email;
+                
+                
+                playersGameId.textContent = playerOne + " ----- VS Waiting for a opponent "
+                
+            } else {
+                
+                let playerOne = this.gameDat.game.GamePlayer[0].player.email;
+                let playerTwo = this.gameDat.game.GamePlayer[1].player.email;
+                
+                if ( this.gameDat.game.GamePlayer[0].id == this.gamePlayers){
+                    
+                    playersGameId.textContent = playerOne + " (YOU) vs " + playerTwo;
+                    
+                } else{
+                    
+                     playersGameId.textContent = playerTwo + " (YOU) vs " + playerOne;
+                    
+                }
+     
+                
+            }
+        
+            
         }
+
+
+
     }
 
 
 })
 
 
-//https://www.youtube.com/watch?v=KsRnddegee0
