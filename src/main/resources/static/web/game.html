@@ -4,21 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Ship Locations!</title>
+    <!-- version 4.2.1 bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- More libraries for bootstrap-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <!--    My own css-->
     <link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 
 <body>
 
     <div id="app">
-      
-      <p id="playersGame"></p>
-       
-<!--       <div v-for= "players in games">{{players.player.email}}</div>-->
-       
-       
-        <div id="table"></div>
+
+
+
+        <p id="playersGame"></p>
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table table-bordered" id="table1"></div>
+                </div>
+                <div class="col-sm">
+                    <div class="table table-bordered" id="table2"></div>
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
-    
+
     <!-- Vue link-->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- Vue resource-->
