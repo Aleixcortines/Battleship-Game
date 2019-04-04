@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.lang.String;
+import java.lang.Object;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.collectingAndThen;
@@ -58,6 +60,19 @@ public class SalvoController {
         return dto;
     }
 
+    private Map <String,Object> getGPInfo(GamePlayer gamePlayer){
+
+        Map <String,Object> dtoGamePlayerInfo= new HashMap<>();
+
+        dtoGamePlayerInfo.put("id",gamePlayer.getId());
+        dtoGamePlayerInfo.put("player",getAll(gamePlayer.getPlayer()));
+        dtoGamePlayerInfo.put("score", gamePlayer.getScore());
+
+
+
+        return dtoGamePlayerInfo;
+    }
+
        @RequestMapping("/game_view/{gamePlayerID}")
         public Map <String,Object> gameViewId(@PathVariable Long gamePlayerID) {
         Map<String,Object> gameViewDTO = new LinkedHashMap<>();
@@ -66,16 +81,6 @@ public class SalvoController {
             return gameViewDTO;
     }
 
-
-    private Map <String,Object> getGPInfo(GamePlayer gamePlayer){
-
-        Map <String,Object> dtoGamePlayerInfo= new HashMap<>();
-
-        dtoGamePlayerInfo.put("id",gamePlayer.getId());
-        dtoGamePlayerInfo.put("player",getAll(gamePlayer.getPlayer()));
-
-        return dtoGamePlayerInfo;
-    }
 
     private Map <String,Object> getGameViewInfo (GamePlayer gamePlayer){
         Map<String,Object> gameInfo = new HashMap<>();
@@ -91,8 +96,20 @@ public class SalvoController {
                 .stream()
                 .map(ship -> makeShipDTO(ship))
                 .collect(toList())
-
         );
+
+        gameInfo.put("mySalvoes",gamePlayer.getSalvo()
+
+                .stream()
+                .map(salvo -> makeSalvoDTO(salvo))
+                .collect(toList())
+        );
+        if (gamePlayer.getGame().getGamePlayers().size()>1){
+            gameInfo.put("opponentSalvoes", getOpponent(gamePlayer).getSalvo()
+                    .stream()
+                    .map(salvo -> makeSalvoDTO(salvo))
+                    .collect(toList()));
+        }
 
         return gameInfo;
     }
@@ -104,6 +121,25 @@ public class SalvoController {
         return shipDTO;
     }
 
+
+    private Map <String,Object> makeSalvoDTO(Salvo salvo){
+
+        Map <String,Object> salvoDTO = new HashMap<>();
+        salvoDTO.put("Turn",salvo.getTurn());
+        salvoDTO.put("Location",salvo.getLocations());
+
+
+        return salvoDTO;
+    }
+
+    private GamePlayer getOpponent (GamePlayer gamePlayer){
+
+       return gamePlayer.getGame().getGamePlayers()
+               .stream()
+               .filter(gamePlayer1 -> !gamePlayer.equals(gamePlayer1))
+               .findFirst()
+               .orElse(null);
+    }
 }
 
 
