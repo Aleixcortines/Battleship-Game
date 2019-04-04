@@ -18,7 +18,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository,ShipRepository shipRepository) {
+	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository,ShipRepository shipRepository,SalvoRepository salvoRepository, ScoreRepository scoreRepository) {
 		return (args) -> {
 			// Create players
 			Player p1 = new Player("Jack","Bauer", "j.bauer@ctu.gov" );
@@ -48,26 +48,48 @@ public class SalvoApplication {
 			Game g8= new Game(LocalDateTime.now().plusHours(7));
 			gameRepository.save(g8);
 
-			//create gamePlayers
+			//create gamePlayers in every game
 			//Game 1
 			GamePlayer gp1 = new GamePlayer(g1, p1);
 			gamePlayerRepository.save(gp1);
 			GamePlayer gp2 = new GamePlayer(g1, p2);
 			gamePlayerRepository.save(gp2);
-
 			//Game 2
 			GamePlayer gp3 = new GamePlayer(g2, p1);
 			gamePlayerRepository.save(gp3);
 			GamePlayer gp4 = new GamePlayer(g2, p2);
 			gamePlayerRepository.save(gp4);
-
 			//Game 3
 			GamePlayer gp5 = new GamePlayer(g3,p2);
 			gamePlayerRepository.save(gp5);
 			GamePlayer gp6 = new GamePlayer(g3,p4);
 			gamePlayerRepository.save(gp6);
+			//Game 4
+			GamePlayer gp7 = new GamePlayer(g4,p2);
+			gamePlayerRepository.save(gp7);
+			GamePlayer gp8 = new GamePlayer(g4,p3);
+			gamePlayerRepository.save(gp8);
+			//Game 5
+			GamePlayer gp9 = new GamePlayer(g5,p4);
+			gamePlayerRepository.save(gp9);
+			GamePlayer gp10 = new GamePlayer(g5,p3);
+			gamePlayerRepository.save(gp10);
+			//Game 6
+			GamePlayer gp11 = new GamePlayer(g6,p3);
+			gamePlayerRepository.save(gp11);
+			GamePlayer gp12= new GamePlayer(g6,p3);
+			gamePlayerRepository.save(gp12);
+			//Game 7
+			GamePlayer gp13 = new GamePlayer(g7,p4);
+			gamePlayerRepository.save(gp13);
+			//Game 8
+			GamePlayer gp14 = new GamePlayer(g8,p3);
+			gamePlayerRepository.save(gp14);
+			GamePlayer gp15 = new GamePlayer(g8,p4);
+			gamePlayerRepository.save(gp15);
 
-			//Create Ships for game player 1
+			//Create Ships and locations
+			//In game 1
 			Ship s1 =new Ship("Destroyer", Arrays.asList("H2","H3","H4"));
 			//add the ship inside game player 1
 			gp1.addShip(s1);
@@ -76,18 +98,199 @@ public class SalvoApplication {
 			Ship s2= new Ship("Submarine",Arrays.asList("E1", "F1", "G1"));
 			gp1.addShip(s2);
 			shipRepository.save(s2);
-			Ship s3= new Ship("Patrol Boat",Arrays.asList("B4", "B5"));
+			Ship s3= new Ship("PatrolBoat",Arrays.asList("B4", "B5"));
 			gp1.addShip(s3);
 			shipRepository.save(s3);
 			Ship s4= new Ship("Destroyer",Arrays.asList("B5", "C5","D5"));
-			gp1.addShip(s4);
+			gp2.addShip(s4);
 			shipRepository.save(s4);
-			Ship s5= new Ship("Patrol Boat",Arrays.asList("F1", "F2"));
+			Ship s5= new Ship("PatrolBoat",Arrays.asList("F1", "F2"));
 			gp2.addShip(s5);
 			shipRepository.save(s5);
+			//In game 2
 			Ship s6= new Ship("Destroyer",Arrays.asList("B5", "C5","D5"));
-			gp2.addShip(s6);
+			gp3.addShip(s6);
 			shipRepository.save(s6);
+			Ship s7= new Ship("PatrolBoat",Arrays.asList("C6", "C7"));
+			gp3.addShip(s7);
+			shipRepository.save(s7);
+			Ship s8= new Ship("Submarine",Arrays.asList("A2", "A3", "A4"));
+			gp4.addShip(s8);
+			shipRepository.save(s8);
+			Ship s9= new Ship("PatrolBoat",Arrays.asList("G6", "H6"));
+			gp4.addShip(s9);
+			shipRepository.save(s9);
+			//In game 3
+			Ship s10= new Ship("Destroyer",Arrays.asList("B5", "C5","D5"));
+			gp5.addShip(s10);
+			shipRepository.save(s10);
+			Ship s11= new Ship("PatrolBoat",Arrays.asList("C6", "C7"));
+			gp5.addShip(s11);
+			shipRepository.save(s11);
+			Ship s12= new Ship("Submarine",Arrays.asList("A2", "A3","A4"));
+			gp6.addShip(s12);
+			shipRepository.save(s12);
+			Ship s13= new Ship("PatrolBoat",Arrays.asList("G6", "H6"));
+			gp6.addShip(s13);
+			shipRepository.save(s13);
+			//In game 4
+			Ship s14= new Ship("Destroyer",Arrays.asList("B5", "C5", "D5"));
+			gp7.addShip(s14);
+			shipRepository.save(s14);
+			Ship s15= new Ship("Destroyer",Arrays.asList("C6", "C7"));
+			gp7.addShip(s15);
+			shipRepository.save(s15);
+			Ship s16= new Ship("Submarine",Arrays.asList("A2", "A3", "A4"));
+			gp8.addShip(s16);
+			shipRepository.save(s16);
+			Ship s17= new Ship("PatrolBoat",Arrays.asList("G6", "H6"));
+			gp8.addShip(s17);
+			shipRepository.save(s17);
+			//In game 5
+			Ship s18= new Ship("Destroyer",Arrays.asList("B5", "C5", "D5"));
+			gp9.addShip(s18);
+			shipRepository.save(s18);
+			Ship s19= new Ship("PatrolBoat",Arrays.asList("C6", "C7"));
+			gp9.addShip(s19);
+			shipRepository.save(s19);
+			Ship s20= new Ship("Submarine",Arrays.asList("A2", "A3","A4"));
+			gp10.addShip(s20);
+			shipRepository.save(s20);
+			Ship s21= new Ship("Submarine",Arrays.asList("G6", "H6"));
+			gp10.addShip(s21);
+			shipRepository.save(s21);
+			//In game 6
+			Ship s22= new Ship("Destroyer",Arrays.asList("B5", "C5", "D5"));
+			gp11.addShip(s22);
+			shipRepository.save(s22);
+			Ship s23= new Ship("PatrolBoat",Arrays.asList("C6", "C7"));
+			gp12.addShip(s23);
+			shipRepository.save(s23);
+			//In game 8
+			Ship s24= new Ship("Destroyer",Arrays.asList("B5", "C5", "D5"));
+			gp14.addShip(s24);
+			shipRepository.save(s24);
+			Ship s25= new Ship("PatrolBoat",Arrays.asList("C6", "C7"));
+			gp14.addShip(s25);
+			shipRepository.save(s25);
+			Ship s26= new Ship("Submarine",Arrays.asList("A2", "A3","A4"));
+			gp15.addShip(s26);
+			shipRepository.save(s26);
+			Ship s27= new Ship("PatrolBoat",Arrays.asList("G6", "H6"));
+			gp15.addShip(s27);
+			shipRepository.save(s27);
+
+			//Create salvos and locations
+			//in game 1
+			Salvo salvo1 = new Salvo(1, Arrays.asList("B5", "C5", "F1"),gp1);
+			salvoRepository.save(salvo1);
+			Salvo salvo2 = new Salvo(1,Arrays.asList("B4", "B5", "B6"),gp2);
+			salvoRepository.save(salvo2);
+			Salvo salvo3 = new Salvo(2, Arrays.asList("F2", "D5"), gp1);
+			salvoRepository.save(salvo3);
+			Salvo salvo4 = new Salvo (2, Arrays.asList("E1", "H3", "A2"), gp2);
+			salvoRepository.save(salvo4);
+			//in game2
+			Salvo salvo5 = new Salvo(1, Arrays.asList("A2", "A4", "G6"),gp3);
+			salvoRepository.save(salvo5);
+			Salvo salvo6 = new Salvo (1, Arrays.asList("B5", "D5", "C7"), gp4);
+			salvoRepository.save(salvo6);
+			Salvo salvo7 = new Salvo(2, Arrays.asList("A3", "H6"), gp3);
+			salvoRepository.save(salvo7);
+			Salvo salvo8 = new Salvo (2, Arrays.asList("C5", "C6"), gp4);
+			salvoRepository.save(salvo8);
+			//in game 3
+			Salvo salvo9 = new Salvo(1, Arrays.asList("G6", "H6", "A4"),gp5);
+			salvoRepository.save(salvo9);
+			Salvo salvo10 = new Salvo (1, Arrays.asList("H1", "H2", "H3"), gp6);
+			salvoRepository.save(salvo10);
+			Salvo salvo11 = new Salvo(2, Arrays.asList("A2", "A3", "D8"), gp5);
+			salvoRepository.save(salvo11);
+			Salvo salvo12 = new Salvo (2, Arrays.asList("E1", "F2", "G3"), gp6);
+			salvoRepository.save(salvo12);
+			//in game 4
+			Salvo salvo13 = new Salvo(1, Arrays.asList("A3", "A4", "F7"),gp7);
+			salvoRepository.save(salvo13);
+			Salvo salvo14 = new Salvo (1, Arrays.asList("B5", "C6", "H1"), gp8);
+			salvoRepository.save(salvo14);
+			Salvo salvo15 = new Salvo(2, Arrays.asList("A2", "G6", "H6"), gp7);
+			salvoRepository.save(salvo15);
+			Salvo salvo16 = new Salvo (2, Arrays.asList("C5", "C7", "D5"), gp8);
+			salvoRepository.save(salvo16);
+			//in game 5
+			Salvo salvo17 = new Salvo(1, Arrays.asList("A1", "A2", "A3"),gp9);
+			salvoRepository.save(salvo17);
+			Salvo salvo18 = new Salvo (1, Arrays.asList("B5", "B6", "C7"), gp10);
+			salvoRepository.save(salvo18);
+			Salvo salvo19 = new Salvo(2, Arrays.asList("G6", "G7", "G8"), gp9);
+			salvoRepository.save(salvo19);
+			Salvo salvo20 = new Salvo (2, Arrays.asList("C6", "D6", "E6"), gp10);
+			salvoRepository.save(salvo20);
+			Salvo salvo21 = new Salvo(3, Arrays.asList("H1", "H8"), gp10);
+			salvoRepository.save(salvo21);
+
+			//Create the scores
+			//In game 1
+			Score sc1 = new Score(1.0);
+			p1.addScore(sc1);
+			g1.addScore(sc1);
+			scoreRepository.save(sc1);
+			Score sc2 = new Score(0.0);
+			p2.addScore(sc2);
+			g1.addScore(sc2);
+			scoreRepository.save(sc2);
+			//In game 2
+			Score sc3 = new Score(0.5);
+			p1.addScore(sc3);
+			g2.addScore(sc3);
+			Score sc4 = new Score(0.5);
+			p2.addScore(sc4);
+			g2.addScore(sc4);
+			Score sc5 = new Score(1.0);
+			p2.addScore(sc5);
+			g3.addScore(sc5);
+			Score sc6 = new Score(0.0);
+			p4.addScore(sc6);
+			g3.addScore(sc6);
+			Score sc7 = new Score(0.5);
+			p2.addScore(sc7);
+			g4.addScore(sc7);
+			Score sc8 = new Score(0.5);
+			p1.addScore(sc8);
+			g4.addScore(sc8);
+			Score sc9 = new Score(0.0);
+			p4.addScore(sc9);
+			g5.addScore(sc9);
+			Score sc10 = new Score(1.0);
+			p1.addScore(sc10);
+			g5.addScore(sc10);
+			Score sc11 = new Score(1.0);
+			p3.addScore(sc11);
+			g6.addScore(sc11);
+			Score sc12 = new Score(0.0);
+			p4.addScore(sc12);
+			g7.addScore(sc12);
+			Score sc13 = new Score(1.0);
+			p3.addScore(sc13);
+			g8.addScore(sc13);
+			Score sc14 = new Score(0.0);
+			p4.addScore(sc14);
+			g8.addScore(sc14);
+
+			scoreRepository.save(sc3);
+			scoreRepository.save(sc4);
+			scoreRepository.save(sc5);
+			scoreRepository.save(sc6);
+			scoreRepository.save(sc7);
+			scoreRepository.save(sc8);
+			scoreRepository.save(sc9);
+			scoreRepository.save(sc10);
+			scoreRepository.save(sc11);
+			scoreRepository.save(sc12);
+			scoreRepository.save(sc13);
+			scoreRepository.save(sc14);
+
+
 
 
 
