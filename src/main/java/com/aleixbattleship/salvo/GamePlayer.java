@@ -17,27 +17,31 @@ public class GamePlayer {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "player_ID")
+    @JoinColumn(name = "player")
     private Player player;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "game_ID")
+    @JoinColumn(name = "game")
     private Game game;
 
     //one to many relation. The owner field in Ship is the Gameplayer (in the database sense) of this relationship
     @OneToMany(mappedBy = "gamePlayer",fetch=FetchType.EAGER )
     Set<Ship> ships = new HashSet<>();
 
+    //one to many relation. The owner field in Salvo is the Gameplayer (in the database sense) of this relationship
+    @OneToMany(mappedBy = "gamePlayer",fetch=FetchType.EAGER )
+    Set<Salvo> salvos = new HashSet<>();
+
     private LocalDateTime date;
 
     public GamePlayer(){}
 
-    public GamePlayer(Game gameID,Player playerID){
+    public GamePlayer(Game game,Player player){
 //    this.id=id;
 //    this.date=date;
-    this.game=gameID;
-    this.player=playerID;
+    this.game=game;
+    this.player=player;
     }
     //method to add a new ship
     public void addShip(Ship ship) {
@@ -79,6 +83,16 @@ public class GamePlayer {
     }
 
     public void setShips(Set<Ship> ships) { this.ships = ships;}
+
+    public Set<Salvo> getSalvo(){return salvos;}
+
+    public void setSalvos(Set<Salvo> salvos) { this.salvos = salvos; }
+
+    public Score getScore(){
+        return this.getScore();
+    }
+
+
 
     @Override
     public String toString() {
