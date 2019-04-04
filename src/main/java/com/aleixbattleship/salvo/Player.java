@@ -2,6 +2,7 @@ package com.aleixbattleship.salvo;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -19,6 +20,9 @@ public class Player {
     @OneToMany(mappedBy="player", fetch= FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy="player", fetch= FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
+
     public Player(){}
 
     public Player (String name, String lastName, String userName){
@@ -27,6 +31,16 @@ public class Player {
         this.lastName=lastName;
         this.userName=userName;
     }
+
+    //methods
+    //method to add score
+    public void addScore(Score score) {
+        score.setPlayer(this);
+        //add the score to the set of scores for this game.
+        this.scores.add(score);
+    }
+
+    //gets and sets
 
     public Long getId() {
         return id;
@@ -55,6 +69,14 @@ public class Player {
 
     public Set <GamePlayer> getGamePlayers(){
         return gamePlayers;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
     }
 
     @Override
