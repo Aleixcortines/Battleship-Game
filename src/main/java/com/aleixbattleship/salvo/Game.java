@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 
@@ -23,6 +24,8 @@ public class Game {
     @OneToMany(mappedBy="game", fetch= FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy="game", fetch= FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
 
     public Game(){}
 
@@ -31,7 +34,15 @@ public class Game {
         this.date = date;
 
     }
+    //methods
+    //method to add score
+    public void addScore(Score score) {
+        score.setGame(this);
+        //add the score to the set of scores for this game.
+        this.scores.add(score);
+    }
 
+    //gets and sets
     public Long getId() {
         return id;
     }
@@ -52,6 +63,14 @@ public class Game {
 
     public List<Player> getPlayers() {
         return this.gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
     }
 
     @Override
