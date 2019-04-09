@@ -1,31 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Salvo!</title>
+    <!-- version 4.2.1 bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- More libraries for bootstrap-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
-<div id="app">
+    <div id="app">
 
-    <div v-if="gameData.length > 0">
-    <ol>
+        <div class="container">
+
+            <div v-if="gameData.length > 0">
+                <ol>
 
 
-         <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].email}} vs Fuck off you're waiting for a player </li>
-         <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].email}} vs {{game.gamePlayers[1].email}} </li>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].email}} vs you're waiting for a player </li>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].email}} vs {{game.gamePlayers[1].email}} </li>
 
-    </ol>
+                </ol>
+            </div>
+
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Leaderboard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Username</th>
+                        <th>Total Score</th>
+                        <th>Won</th>
+                        <th>Lost</th>
+                        <th>Tied</th>
+                        
+                    </tr>
+                    <tr v-for="scores in leaderBoard">
+                        <td>{{scores.name}}</td>
+                        <td>{{scores.pts}}</td>
+                        <td> {{scores.win}} </td>
+                        <td> {{scores.lose}} </td>
+                        <td> {{scores.tie}} </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+
     </div>
-</div>
 
 
-<!--Vue script-->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<!-- Vue resource-->
-<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
-<!--My own script-->
-<script src="games.js"></script>
+    <!--Vue script-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- Vue resource-->
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <!--My own script-->
+    <script src="games.js"></script>
 
-</body>
-</html>
+</body></html>
