@@ -34,7 +34,6 @@ public class Score {
     //methods
     //gets and sets
 
-
     public Long getId() {
         return Id;
     }
