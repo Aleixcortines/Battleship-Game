@@ -61,9 +61,9 @@ public class Game {
         return gamePlayers;
     }
 
-    public List<Player> getPlayers() {
-        return this.gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
-    }
+//    public List<Player> getPlayers() {
+//        return this.gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
+//    }
 
     public Set<Score> getScores() {
         return scores;
