@@ -89,7 +89,7 @@ public class GamePlayer {
     public void setSalvos(Set<Salvo> salvos) { this.salvos = salvos; }
 
     public Score getScore(){
-        return this.getScore();
+        return this.getPlayer().getScores().stream().filter(score -> score.getGame().equals(this.getGame())).findFirst().orElse(null);
     }
 
 
