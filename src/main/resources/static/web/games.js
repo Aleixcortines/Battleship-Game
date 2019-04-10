@@ -12,7 +12,7 @@ let app = new Vue({
     },
     methods: {
         getDataFunction() {
-            var url = "http://localhost:8080/api/games";
+            var url = "/api/games";
 
             fetch(url, {
                     mode: "cors",
@@ -86,8 +86,12 @@ let app = new Vue({
                 }
             }
             
-            
-            let sortedArray = pl.sort((a, b) => a.pts < b.pts ? 1 : a.pts > b.pts ? -1 : 0);
+            let sortedArray = pl.sort((a, b) => {
+                var gamesA = a.win+a.lose+a.tie;
+                var gamesB = b.win+b.lose+b.tie;
+                
+                return  a.pts < b.pts ? 1 : a.pts > b.pts ? -1 : (gamesA > gamesB ? 1 : gamesA < gamesB ? -1 : 0 ) 
+            } );
             app.leaderBoard = sortedArray;
         }
 
