@@ -4,14 +4,13 @@ import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.lang.String;
 import java.lang.Object;
 import java.util.stream.Collectors;
@@ -37,6 +36,22 @@ public class SalvoController {
 
     //Request Methods - (RequestMapping: specifies the URL where the data is displayed)
     @RequestMapping("/games")
+
+    public Map<String,Object> getCurrentUser(Authentication authentication) {
+        Map<String, Object> currentUser = new LinkedHashMap<>();
+        if (!isGuest(authentication ) ){
+            currentUser.put("player", getPlayerDTO(playerRepository.findByUserName(authentication.getName())));
+        } else {
+            currentUser.put("player","null");
+        }
+        currentUser.put("games", getAll());
+        return currentUser;
+    }
+
+    //This function returns true (if user is logged in) or false (if not) --> called in "RequestMapping ("/games")"
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
     public List<Object> getAll() {
 
         return gameRepository.findAll()
@@ -151,15 +166,22 @@ public class SalvoController {
                .orElse(null);
     }
 
+    @RequestMapping(path = "/players", method = RequestMethod.GET)
+    List <Object> getPlayersInfo(){
+
+        Set<Player> players = new LinkedHashSet<>(playerRepository.findAll());
+          return players
+          .stream()
+          .map(this::getPlayerDTO)
+          .collect(toList());
+    }
 
 
     @RequestMapping(path = "/players", method = RequestMethod.POST)
-    public ResponseEntity<Object> register(
-
-            @RequestParam String name, @RequestParam String lastname ,@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<Object> register(@RequestParam String username, @RequestParam String password) {
 
 
-        if ( name.isEmpty()|| lastname.isEmpty() || username.isEmpty() || password.isEmpty()) {
+        if ( username.isEmpty() || password.isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
 
@@ -167,7 +189,7 @@ public class SalvoController {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
         }
 
-        playerRepository.save(new Player(name, lastname, username, passwordEncoder.encode(password)));
+        playerRepository.save(new Player( username, password));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
