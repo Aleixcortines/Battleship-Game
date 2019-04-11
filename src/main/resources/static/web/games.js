@@ -27,6 +27,24 @@ let app = new Vue({
                 })
         },
 
+        login(evt) {
+            evt.preventDefault();
+            var form = evt.target.form;
+            $.post("/api/login", {
+                    name: form["username"].value,
+                    pwd: form["password"].value
+                })
+                .done()
+                .fail();
+        },
+
+        logout(evt) {
+            evt.preventDefault();
+            $.post("/api/logout")
+                .done()
+                .fail();
+        },
+
         //function to get players and scores and push on gameScores
         getScores() {
 
@@ -62,8 +80,7 @@ let app = new Vue({
                     }
                 })
             }
-            
-            console.log(pl);
+
 
             for (let i = 0; i < filtered.length; i++) {
                 for (let j = 0; j < playerScores.length; j++) {
@@ -85,13 +102,13 @@ let app = new Vue({
                     }
                 }
             }
-            
+
             let sortedArray = pl.sort((a, b) => {
-                var gamesA = a.win+a.lose+a.tie;
-                var gamesB = b.win+b.lose+b.tie;
-                
-                return  a.pts < b.pts ? 1 : a.pts > b.pts ? -1 : (gamesA > gamesB ? 1 : gamesA < gamesB ? -1 : 0 ) 
-            } );
+                var gamesA = a.win + a.lose + a.tie;
+                var gamesB = b.win + b.lose + b.tie;
+
+                return a.pts < b.pts ? 1 : a.pts > b.pts ? -1 : (gamesA > gamesB ? 1 : gamesA < gamesB ? -1 : 0)
+            });
             app.leaderBoard = sortedArray;
         }
 
