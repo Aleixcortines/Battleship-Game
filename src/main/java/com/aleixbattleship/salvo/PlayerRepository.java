@@ -3,6 +3,7 @@ import java.lang.String;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.repository.query.Param;
 
 
 // Rest Repository - sends instances of Java classes (stored in JpaRepository) to browsers and other web services in JSON strings,
@@ -11,8 +12,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     //Repository Query Methods - finds information from the database and declares it on the repository interface.
-    List<Player> findByUserName (String userName);
+    //List<Player> findByUserName (String userName);
 
+    Player findByUserName(@Param("username") String password);
 
 }
 
