@@ -2,10 +2,10 @@ package com.aleixbattleship.salvo;
 
 import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.util.HashMap;
@@ -29,6 +29,10 @@ public class SalvoController {
     private GameRepository gameRepository;
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    private PlayerRepository playerRepository;
 
 
     //Request Methods - (RequestMapping: specifies the URL where the data is displayed)
@@ -75,10 +79,6 @@ public class SalvoController {
 
         dtoGamePlayerInfo.put("id",gamePlayer.getId());
         dtoGamePlayerInfo.put("player",getPlayerDTO(gamePlayer.getPlayer()));
-
-
-
-
 
         return dtoGamePlayerInfo;
     }
@@ -150,6 +150,25 @@ public class SalvoController {
                .findFirst()
                .orElse(null);
     }
-}
 
+
+
+    @RequestMapping(path = "/players", method = RequestMethod.POST)
+    public ResponseEntity<Object> register(
+
+            @RequestParam String name, @RequestParam String lastname ,@RequestParam String username, @RequestParam String password) {
+
+
+        if ( name.isEmpty()|| lastname.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        }
+
+        if (playerRepository.findByUserName(username) !=  null) {
+            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+        }
+
+        playerRepository.save(new Player(name, lastname, username, passwordEncoder.encode(password)));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+}
 
