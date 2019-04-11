@@ -18,12 +18,21 @@
 
         <div class="container">
 
+            <form id="login-form" onsubmit="return false">
+                <label>Name: <input type="text" name="username"></label>
+                <label>Password: <input type="text" name="password"></label>
+            </form>
+
+            <form id="logout-form" onsubmit="return false">
+                <button>Log out</button>
+            </form>
+
             <div v-if="gameData.length > 0">
                 <ol>
 
 
-                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].email}} vs you're waiting for a player </li>
-                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].email}} vs {{game.gamePlayers[1].email}} </li>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player </li>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}} </li>
 
                 </ol>
             </div>
@@ -41,7 +50,7 @@
                         <th>Won</th>
                         <th>Lost</th>
                         <th>Tied</th>
-                        
+
                     </tr>
                     <tr v-for="scores in leaderBoard">
                         <td>{{scores.name}}</td>
@@ -49,7 +58,7 @@
                         <td> {{scores.win}} </td>
                         <td> {{scores.lose}} </td>
                         <td> {{scores.tie}} </td>
-                        
+
                     </tr>
                 </tbody>
             </table>
@@ -68,4 +77,6 @@
     <!--My own script-->
     <script src="games.js"></script>
 
-</body></html>
+</body>
+
+</html>
