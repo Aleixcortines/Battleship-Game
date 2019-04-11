@@ -34,6 +34,11 @@ public class Player {
         this.password=password;
     }
 
+    public Player ( String userName,String password){
+        this.userName=userName;
+        this.password=password;
+    }
+
     //methods
     //method to add score
     public void addScore(Score score) {
