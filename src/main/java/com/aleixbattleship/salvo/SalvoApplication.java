@@ -357,7 +357,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 				.antMatchers("/admin/**").hasAuthority("ADMIN")
+				.antMatchers("/api").permitAll()
 				.antMatchers("/web/games.html").permitAll()
+				.antMatchers("/web/game.html").hasAuthority("USER")
 				.and()
 				.formLogin();//creates a login controller.
 
