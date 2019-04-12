@@ -19,13 +19,21 @@
         <div class="container">
 
             <form id="login-form" onsubmit="return false">
-                <label>Name: <input type="text" name="username"></label>
-                <label>Password: <input type="text" name="password"></label>
+                <label>Name: <input type="text" name="username" v-model="emailInput"></label>
+                <label>Password: <input type="text" name="password" v-model="passwordInput"></label>
+                <button v-on:click="login" class=" buttons button is-info">Log in</button>
             </form>
-
             <form id="logout-form" onsubmit="return false">
-                <button>Log out</button>
+                <button v-on:click="logout" class=" buttons button is-info" v-if="noLog">Log out</button>
             </form>
+            
+            
+                     <!-- Login button-->
+<!--                     <button v-on:click="login" id="login" class=" buttons button is-info">Login</button>-->
+                     <!-- Unlog button, the v-if is to show the button only with the user is unlogin on the chat-->
+<!--                     <button v-on:click="unLogin" id="login" class="buttons is-info" v-if="noLog">Logout</button>-->
+                     <!-- Send button, the v-if is to show only the button with the user is unlogin on the chat-->
+<!--                     <button v-on:click="writeNewPost" id="create-post" class="buttons is-primary" v-if="noLog">Send </button>-->
 
             <div v-if="gameData.length > 0">
                 <ol>

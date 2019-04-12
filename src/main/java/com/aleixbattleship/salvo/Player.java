@@ -86,7 +86,7 @@ public class Player {
         this.scores = scores;
     }
 
-    public String getPassword(String userName){return password;}
+    public String getPassword(){return password;}
 
     public void setPassword(String password) {
         this.password = password;
