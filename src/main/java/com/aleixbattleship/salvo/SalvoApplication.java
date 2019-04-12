@@ -337,7 +337,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 		auth.userDetailsService(username-> {
 			Player player = playerRepository.findByUserName(username);
 			if (player != null) {
-				return new User(player.getUserName(), player.getPassword(username),
+				return new User(player.getUserName(), player.getPassword(),
 						AuthorityUtils.createAuthorityList("USER"));
 			} else {
 				throw new UsernameNotFoundException("Unknown user: " + username);
