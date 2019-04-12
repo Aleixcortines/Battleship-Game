@@ -17,28 +17,19 @@
     <div id="app">
 
         <div class="container">
-
-            <form id="login-form" onsubmit="return false">
+            <!--two divs to show and no show the button. When the player object is null show me the buttons, if not show me the log out button-->
+            <div v-if="player == 'null'">
                 <label>Name: <input type="text" name="username" v-model="emailInput"></label>
-                <label>Password: <input type="text" name="password" v-model="passwordInput"></label>
-                <button v-on:click="login" class=" buttons button is-info">Log in</button>
-            </form>
-            <form id="logout-form" onsubmit="return false">
-                <button v-on:click="logout" class=" buttons button is-info" v-if="noLog">Log out</button>
-            </form>
-            
-            
-                     <!-- Login button-->
-<!--                     <button v-on:click="login" id="login" class=" buttons button is-info">Login</button>-->
-                     <!-- Unlog button, the v-if is to show the button only with the user is unlogin on the chat-->
-<!--                     <button v-on:click="unLogin" id="login" class="buttons is-info" v-if="noLog">Logout</button>-->
-                     <!-- Send button, the v-if is to show only the button with the user is unlogin on the chat-->
-<!--                     <button v-on:click="writeNewPost" id="create-post" class="buttons is-primary" v-if="noLog">Send </button>-->
+                <label>Password: <input type="password" name="password" v-model="passwordInput"></label>
+                <button v-on:click="login()" class="buttons button is-info">Log in</button>
+                <button v-on:click="signup()" class="buttons button is-info">Sign up</button>
+            </div>
+            <div v-else>
+                <button v-on:click="logout()" class=" buttons button is-info">Log out</button>
+            </div>
 
             <div v-if="gameData.length > 0">
                 <ol>
-
-
                     <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player </li>
                     <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}} </li>
 
