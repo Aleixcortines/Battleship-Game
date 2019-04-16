@@ -14,7 +14,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     //Repository Query Methods - finds information from the database and declares it on the repository interface.
     //List<Player> findByUserName (String userName);
 
-    Player findByUserName(@Param("username") String password);
+    Player findByUserName(@Param("username") String username);
 
 }
 
