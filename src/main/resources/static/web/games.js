@@ -10,7 +10,7 @@ let app = new Vue({
         leaderBoard: [],
         emailInput: "",
         passwordInput: "",
-        player: null
+        player: "null"
     },
     methods: {
         getDataFunction() {
@@ -143,7 +143,6 @@ let app = new Vue({
                 })
             }
 
-
             for (let i = 0; i < filtered.length; i++) {
                 for (let j = 0; j < playerScores.length; j++) {
                     if (filtered[i] == playerScores[j].player) {
@@ -172,7 +171,24 @@ let app = new Vue({
                 return a.pts < b.pts ? 1 : a.pts > b.pts ? -1 : (gamesA > gamesB ? 1 : gamesA < gamesB ? -1 : 0)
             });
             app.leaderBoard = sortedArray;
-        }
+        },
+        //function to take the id of the current player that is login
+        enterGame(gamePlayers) {
+
+            for (var i = 0; i < gamePlayers.length; i++) {
+
+                if (this.player.email === gamePlayers[i].player.email) {
+
+                    this.getURL(gamePlayers[i].id);
+                }
+            }
+        },
+        //function that takes the id of the current player login and goes with the link to the game
+        getURL(id) {
+
+            window.location.href = "http://localhost:8080/web/game.html?gp=" + id;
+
+        },
 
     }
 })
