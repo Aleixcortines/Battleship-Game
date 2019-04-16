@@ -16,13 +16,13 @@ let app = new Vue({
         ships: [],
         gameDat: [],
         salvoOpponent: [],
-        mySalvoes:[],
+        mySalvoes: [],
     },
 
     methods: {
         getData() {
 
-            let url = "http://localhost:8080/api/game_view/" + this.gamePlayers;
+            let url = "/api/game_view/" + this.gamePlayers;
 
             fetch(url, {
                     mode: "cors"
@@ -31,21 +31,31 @@ let app = new Vue({
                     return response.json()
                 })
                 .then(function (gameJson) {
+                    //check the properties of gameJson, if there is an error
+                    if (gameJson.hasOwnProperty("Error")) {
+                        //error! you can't see other games
+                        alert(gameJson.error);
+                        //goes to page before 
+                        history.go(-1);
+                        //if not, caharge the object gameJson
+                    } else {
 
-                    app.gameDat = gameJson;
+                        console.log(gameJson);
 
-                    app.games = gameJson.game.GamePlayer;
+                        app.gameDat = gameJson;
 
-                    app.ships = gameJson.game.Ships;
+                        app.games = gameJson.game.GamePlayer;
 
-                    app.salvoOpponent = gameJson.game.opponentSalvoes;
-                
-                    app.mySalvoes =  gameJson.game.mySalvoes;
+                        app.ships = gameJson.game.Ships;
 
-                    app.gameVs();
+                        app.salvoOpponent = gameJson.game.opponentSalvoes;
 
-                    app.printSalvoesOpponent();
+                        app.mySalvoes = gameJson.game.mySalvoes;
 
+                        app.gameVs();
+
+                        app.printSalvoesOpponent();
+                    }
 
                 })
                 .catch(error => console.log(error))
@@ -63,7 +73,7 @@ let app = new Vue({
         },
         //funtion to crate the grid
         populateTable(tablesHTML) {
-    
+
 
             const column = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
             const tables = document.getElementById(tablesHTML);
@@ -73,14 +83,14 @@ let app = new Vue({
             //the element above will be use later
 
             table.appendChild(tbody);
-            
+
             //bind the tbody  to the table element, the tbody will be then build with the 2 loops below
 
             for (var i = 0; i < 11; i++) {
-                
+
 
                 var tr = document.createElement("tr");
-                
+
                 tbody.appendChild(tr);
 
                 //bind the tr element to the tbody, the tr will be built below:
@@ -97,7 +107,7 @@ let app = new Vue({
                         td.textContent = column[i];
                     } //this will add the content of the first row(the numbers)
 
-                    td.setAttribute("id", column[i] + j+tablesHTML);
+                    td.setAttribute("id", column[i] + j + tablesHTML);
                     //this will add an ID to match each cell (eg: cell A1 will have the ID="A1" )
 
                     tr.appendChild(td);
@@ -110,10 +120,10 @@ let app = new Vue({
             //tbody bind to table
             // and now, we are pushing the table to the body , which is the ID of the div in HTMl page
         },
-       
+
         gameVs() {
-            
-          
+
+
 
             let playersGameId = document.getElementById("playersGame");
 
@@ -146,71 +156,71 @@ let app = new Vue({
 
 
         printSalvoesOpponent() {
-            
-            
+
+
             var shipLocationArray = [];
-           
-  
-            for (var s=0 ; s<this.mySalvoes.length; s++){
-                
+
+
+            for (var s = 0; s < this.mySalvoes.length; s++) {
+
                 var mySalvoLocation = this.mySalvoes[s].Location;
-                
+
                 var mySalvoTurn = this.mySalvoes[s].Turn;
-                
-                
-                for ( var l = 0 ; l<mySalvoLocation.length;l++){
-                    
-                    document.getElementById(mySalvoLocation[l]+"table2").style.backgroundColor= 'yellow'
-                    
-                     document.getElementById(mySalvoLocation[l]+"table2").innerHTML= mySalvoTurn;
+
+
+                for (var l = 0; l < mySalvoLocation.length; l++) {
+
+                    document.getElementById(mySalvoLocation[l] + "table2").style.backgroundColor = 'yellow'
+
+                    document.getElementById(mySalvoLocation[l] + "table2").innerHTML = mySalvoTurn;
                 }
-                
+
             }
-            
-            
+
+
             for (var i = 0; i < this.ships.length; i++) {
 
                 var locations = this.ships[i].Location;
 
                 for (var j = 0; j < locations.length; j++) {
 
-                    document.getElementById(locations[j]+"table1").style.backgroundColor = '#424245'
+                    document.getElementById(locations[j] + "table1").style.backgroundColor = '#424245'
 
                     shipLocationArray.push(locations[j]);
-                    
+
 
                 }
             }
 
             for (var i = 0; i < this.salvoOpponent.length; i++) {
-                
+
 
                 var salvoLocations = this.salvoOpponent[i].Location;
-                
+
                 var salvoTurnOpp = this.salvoOpponent[i].Turn;
 
                 for (var j = 0; j < salvoLocations.length; j++) {
 
-                    document.getElementById(salvoLocations[j]+"table1").style.backgroundColor = 'yellow'
-                    document.getElementById(salvoLocations[j]+"table1").innerHTML= salvoTurnOpp;
-                    
+                    document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'yellow'
+                    document.getElementById(salvoLocations[j] + "table1").innerHTML = salvoTurnOpp;
 
-                    for (var x=0; x<shipLocationArray.length;x++) {
-                        
+
+                    for (var x = 0; x < shipLocationArray.length; x++) {
+
                         if (salvoLocations[j].includes(shipLocationArray[x])) {
-                            
-                            document.getElementById(salvoLocations[j]+"table1").style.backgroundColor='red'
-                            
+
+                            document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'red'
+
                         }
 
                     }
 
                 }
             }
-            
-            
-            
-            
+
+
+
+
 
         }
     }
