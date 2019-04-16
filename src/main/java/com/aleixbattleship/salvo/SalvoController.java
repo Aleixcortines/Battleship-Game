@@ -95,10 +95,27 @@ public class SalvoController {
         dtoGamePlayerInfo.put("id",gamePlayer.getId());
         dtoGamePlayerInfo.put("player",getPlayerDTO(gamePlayer.getPlayer()));
 
+
         return dtoGamePlayerInfo;
     }
 
        @RequestMapping("/game_view/{gamePlayerID}")
+       public ResponseEntity<Map<String, Object>> getCurrentGamePlayer(@PathVariable long ID, Authentication authentication){
+           GamePlayer currentGamePlayer = gamePlayerRepository.getOne(ID);
+
+           if(currentGamePlayer.getPlayer().getId()==currentGamePlayer.getId()){
+               return new ResponseEntity<>(gameViewId(ID), HttpStatus.ACCEPTED);
+           }else{
+               return new ResponseEntity<>(makeMap("Error", "You are not authorized to see this game! you fucker"), HttpStatus.UNAUTHORIZED);
+           }
+
+       }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
         public Map <String,Object> gameViewId(@PathVariable Long gamePlayerID) {
         Map<String,Object> gameViewDTO = new LinkedHashMap<>();
         GamePlayer gamePlayer= gamePlayerRepository.getOne(gamePlayerID);
