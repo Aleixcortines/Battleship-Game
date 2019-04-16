@@ -25,13 +25,21 @@
                 <button v-on:click="signup()" class="buttons button is-info">Sign up</button>
             </div>
             <div v-else>
+                <!-- To see the current plaer that it's login-->
+                <h6 v-if="player != 'null'">{{player.email}}</h6>
                 <button v-on:click="logout()" class=" buttons button is-info">Log out</button>
             </div>
 
             <div v-if="gameData.length > 0">
                 <ol>
-                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player </li>
-                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">{{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}} </li>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player
+
+                        <button v-on:click="joinGame()">JoinGame</button>
+                    </li>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}}
+                        <!-- Click the button to enter a game-->
+                        <button v-on:click="enterGame(game.gamePlayers)">EnterGame</button>
+                    </li>
 
                 </ol>
             </div>
