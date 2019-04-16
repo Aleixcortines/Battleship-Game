@@ -33,9 +33,7 @@ public class SalvoController {
     @Autowired
     private PlayerRepository playerRepository;
 
-
-    //Request Methods - (RequestMapping: specifies the URL where the data is displayed)
-    @RequestMapping("/games")
+    @RequestMapping(path="/games")
 
     public Map<String,Object> getCurrentUser(Authentication authentication) {
         Map<String, Object> currentUser = new LinkedHashMap<>();
@@ -47,6 +45,25 @@ public class SalvoController {
         currentUser.put("games", getAll());
         return currentUser;
     }
+    //Request Methods - (RequestMapping: specifies the URL where the data is displayed)
+    @RequestMapping(path="/games", method = RequestMethod.POST)
+
+    public ResponseEntity <Map<String,Object>> createGame (Authentication authentication){
+
+        if (authentication==null){
+            return new ResponseEntity<>(makeMap("error", "Log in please!"),HttpStatus.UNAUTHORIZED);
+        } else {
+            Game game = new Game();
+            gameRepository.save(game);
+            Player player = getCurrentPlayer(authentication);
+            GamePlayer gamePlayer = new GamePlayer(game,player);
+            gamePlayerRepository.save(gamePlayer);
+
+            return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+
+        }
+    }
+
 
     //This function returns true (if user is logged in) or false (if not) --> called in "RequestMapping ("/games")"
     private boolean isGuest(Authentication authentication) {
@@ -100,13 +117,14 @@ public class SalvoController {
     }
 
        @RequestMapping("/game_view/{gamePlayerID}")
-       public ResponseEntity<Map<String, Object>> getCurrentGamePlayer(@PathVariable long ID, Authentication authentication){
-           GamePlayer currentGamePlayer = gamePlayerRepository.getOne(ID);
+       public ResponseEntity<Map<String, Object>> getCurrentGamePlayer(@PathVariable long gamePlayerID, Authentication authentication){
 
-           if(currentGamePlayer.getPlayer().getId()==currentGamePlayer.getId()){
-               return new ResponseEntity<>(gameViewId(ID), HttpStatus.ACCEPTED);
+           GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gamePlayerID);
+
+           if(currentGamePlayer.getPlayer().getId()== getCurrentPlayer(authentication).getId()){
+               return new ResponseEntity<>(gameViewId(gamePlayerID), HttpStatus.ACCEPTED);
            }else{
-               return new ResponseEntity<>(makeMap("Error", "You are not authorized to see this game! you fucker"), HttpStatus.UNAUTHORIZED);
+               return new ResponseEntity<>(makeMap("Error", "You are not authorized to see this game!"), HttpStatus.UNAUTHORIZED);
            }
 
        }
@@ -209,6 +227,20 @@ public class SalvoController {
         player.setPassword(passwordEncoder.encode(player.getPassword()));
         playerRepository.save(player);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+        //method to obtain the player on the authentication
+        public Player getCurrentPlayer(Authentication authentication){
+
+        if(authentication != null){
+
+            return playerRepository.findByUserName(authentication.getName());
+
+        } else {
+            return null;
+        }
+
+
     }
 }
 
