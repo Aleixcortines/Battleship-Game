@@ -10,7 +10,8 @@ let app = new Vue({
         leaderBoard: [],
         emailInput: "",
         passwordInput: "",
-        player: "null"
+        player: "null",
+        gpidData:[],
     },
     methods: {
         getDataFunction() {
@@ -180,15 +181,42 @@ let app = new Vue({
                 if (this.player.email === gamePlayers[i].player.email) {
 
                     this.getURL(gamePlayers[i].id);
-                }
+                } 
             }
         },
         //function that takes the id of the current player login and goes with the link to the game
         getURL(id) {
 
-            window.location.href = "http://localhost:8080/web/game.html?gp=" + id;
+            window.location.href = "/web/game.html?gp=" + id;
 
         },
+        
+        createGame(){
+            
+            let url = "/api/games";
+            
+            fetch( url,{
+                method: "POST",
+                 
+            })
+            
+            .then(function( response){
+                return response.json()
+            })
+            .then(function (gameJson){
+                
+                app.gpidData=gameJson.gpid;
+                
+                if(gameJson.hasOwnProperty('error')){
+                    
+                    alert(gameJson.error);
+                } else {
+                    
+                    return window.location = "/web/game.html?gp=" + app.gpidData;
+                }
+                
+            })
+        }
 
     }
 })
