@@ -154,7 +154,6 @@ let app = new Vue({
 
         },
 
-
         printSalvoesOpponent() {
 
 
@@ -217,9 +216,6 @@ let app = new Vue({
 
                 }
             }
-
-
-
 
 
         }
