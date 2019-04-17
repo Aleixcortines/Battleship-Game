@@ -11,7 +11,7 @@ let app = new Vue({
         emailInput: "",
         passwordInput: "",
         player: "null",
-        gpidData:[],
+        gpidData: [],
     },
     methods: {
         getDataFunction() {
@@ -181,7 +181,7 @@ let app = new Vue({
                 if (this.player.email === gamePlayers[i].player.email) {
 
                     this.getURL(gamePlayers[i].id);
-                } 
+                }
             }
         },
         //function that takes the id of the current player login and goes with the link to the game
@@ -190,32 +190,65 @@ let app = new Vue({
             window.location.href = "/web/game.html?gp=" + id;
 
         },
-        
-        createGame(){
-            
+
+        createGame() {
+
             let url = "/api/games";
-            
-            fetch( url,{
-                method: "POST",
-                 
-            })
-            
-            .then(function( response){
-                return response.json()
-            })
-            .then(function (gameJson){
-                
-                app.gpidData=gameJson.gpid;
-                
-                if(gameJson.hasOwnProperty('error')){
-                    
-                    alert(gameJson.error);
-                } else {
-                    
-                    return window.location = "/web/game.html?gp=" + app.gpidData;
-                }
-                
-            })
+
+            fetch(url, {
+                    method: "POST",
+
+                })
+
+                .then(function (response) {
+                    return response.json()
+                })
+                .then(function (gameJson) {
+
+                    app.gpidData = gameJson.gpid;
+
+                    if (gameJson.hasOwnProperty('error')) {
+
+                        alert(gameJson.error);
+                    } else {
+
+                        return window.location = "/web/game.html?gp=" + app.gpidData;
+                    }
+
+                })
+        },
+
+        joinGame(game_id) {
+
+
+            fetch("/api/game/" + game_id + "/players", {
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    method: "POST"
+                })
+                .then(data => {
+
+                    console.log("Request success: ", data);
+
+                    return data.json();
+                })
+                .then(json => {
+                    if (json.hasOwnProperty('error')) {
+
+                        alert(json.error);
+                    } else {
+
+                        window.location = "/web/game.html?gp=" + json.gpid;
+
+                    }
+
+                })
+                .catch(function (error) {
+                    console.log("Request failure: ", error);
+                });
+
         }
 
     }
