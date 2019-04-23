@@ -30,28 +30,54 @@
                 <button v-on:click="logout()" class=" buttons button is-info">Log out</button>
             </div>
 
-           <button type="button" v-on:click="createGame()">CreateGame</button>
-           
-            <div v-if="gameData.length > 0">
-                <ol>
-                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player
+            <button class="btn btn-secondary" type="button" v-on:click="createGame()">CreateGame</button>
 
-                        <button type="button" class="btn btn-primary" v-on:click="joinGame()">JoinGame</button>
+            <!--When the player is unlogin, show the list of games without the buttons-->
+
+            <ol v-if="player == 'null'">
+
+                <li v-for="game in gameData" v-if="game.gamePlayers.length == 1">
+                    {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player
+                </li>
+                <li v-for="game in gameData" v-if="game.gamePlayers.length == 2">
+
+                    {{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}}
+                </li>
+
+            </ol>
+
+            <!-- If not, when there is a user login, show the buttons-->
+            <div v-else>
+
+
+                <ol>
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 1">
+
+
+                        {{game.created}}, {{game.gamePlayers[0].player.email}} vs you're waiting for a player
+
+                        <button v-if="player.email != game.gamePlayers[0].player.email" type="button" class="btn btn-primary" v-on:click="joinGame(game.id)">JoinGame</button>
+
+                        <button v-if="checkRejoin(game.gamePlayers)" v-on:click="enterGame(game.gamePlayers)" type="button" class="btn btn-success">EnterGame</button>
+
+
                     </li>
-                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2"> {{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}}
+
+                    <li v-for="game in gameData" v-if="game.gamePlayers.length == 2 "> {{game.created}}, {{game.gamePlayers[0].player.email}} vs {{game.gamePlayers[1].player.email}}
                         <!-- Click the button to enter a game-->
-                        
-                        <button type="button" class="btn btn-success" v-if="player.email === game.gamePlayers[0].player.email || player.email === game.gamePlayers[1].player.email" v-on:click="enterGame(game.gamePlayers)" >EnterGame</button>
-                        
-                        <div  v-else> 
-                        
-                        <button type="button" class="btn btn-danger">DISABLED</button>
-                        
+
+                        <button type="button" class="btn btn-success" v-if="player.email === game.gamePlayers[0].player.email || player.email === game.gamePlayers[1].player.email " v-on:click="enterGame(game.gamePlayers)">EnterGame</button>
+
+                        <div v-else>
+
+                            <button type="button" class="btn btn-danger">DISABLED</button>
+
                         </div>
-                      
+
                     </li>
 
                 </ol>
+
             </div>
 
             <table class="table table-dark table-hover">
