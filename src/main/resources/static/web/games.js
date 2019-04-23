@@ -12,6 +12,7 @@ let app = new Vue({
         passwordInput: "",
         player: "null",
         gpidData: [],
+        player:[],
     },
     methods: {
         getDataFunction() {
@@ -173,12 +174,24 @@ let app = new Vue({
             });
             app.leaderBoard = sortedArray;
         },
+        
+       //if the current player is the same as the player in the game the rejoin button is shown, else the join button stays in the screen
+        
+        
+        checkRejoin(something) {
+           
+           for (let j = 0; j < something.length; j++) {
+               if (this.player.email == something[j].player.email) {
+                   return true;
+               }
+           }
+       },
         //function to take the id of the current player that is login
         enterGame(gamePlayers) {
 
             for (var i = 0; i < gamePlayers.length; i++) {
 
-                if (this.player.email === gamePlayers[i].player.email) {
+                if (this.player.email == gamePlayers[i].player.email) {
 
                     this.getURL(gamePlayers[i].id);
                 }
