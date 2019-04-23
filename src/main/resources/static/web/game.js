@@ -40,7 +40,7 @@ let app = new Vue({
                         //if not, caharge the object gameJson
                     } else {
 
-                        console.log(gameJson);
+
 
                         app.gameDat = gameJson;
 
@@ -60,6 +60,58 @@ let app = new Vue({
                 })
                 .catch(error => console.log(error))
         },
+
+
+        //method to send ships
+        sendShips() {
+            // " + this.gamePlayers + "  to obtain the id of the game player
+            fetch("/api/games/players/" + this.gamePlayers + "/ships", {
+
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+
+                method: "POST",
+                //some ships to send and try to put on the grid
+                body: JSON.stringify([{
+                        "type": "destroyer",
+                        "locations": ["A1", "B1", "C1"]
+                        },
+                    {
+                        "type": "patrol boat",
+                        "locations": ["H5", "H6"]
+                        },
+                    {
+                        "type": "patrol boat",
+                        "locations": ["A5", "A6"]
+                                      },
+                    {
+                        "type": "patrol boat",
+                        "locations": ["E5", "E6"]
+                                          },
+                    {
+                        "type": "destroyer",
+                        "locations": ["A1", "B1", "C1"]
+                                      }
+
+                                ])
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+
+                console.log('Request success', data)
+
+                return data.json();
+
+            }).catch(function (error) {
+
+                console.log('Request failure:', error)
+            });
+
+        },
+
         //function to take de gamePlayers ID
         getID() {
 
