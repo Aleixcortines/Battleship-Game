@@ -70,10 +70,10 @@ public class SalvoController {
     }
 
         //method for a list placed ships
-    @RequestMapping(value="/games/players/{gamePlayerId}/ships", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> addShips (@PathVariable long ID, Authentication authentication, @RequestBody List<Ship> ships){
+    @RequestMapping(value="/games/players/{gamePlayerID}/ships", method=RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> addShips (@PathVariable long gamePlayerID, Authentication authentication, @RequestBody List<Ship> ships){
 
-        GamePlayer currentGamePlayer = gamePlayerRepository.getOne(ID);
+        GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gamePlayerID);
 
         if (authentication==null){
             return new ResponseEntity<>(makeMap("error", "Log in please!"), HttpStatus.UNAUTHORIZED);
@@ -83,12 +83,12 @@ public class SalvoController {
             return new ResponseEntity<>(makeMap("error", "You are not authorized to see this GamePlayer"), HttpStatus.UNAUTHORIZED);
         }
 
-        if(currentGamePlayer.getShip().size() != 5){
-            return new ResponseEntity<>(makeMap("Error", "You have already placed ships"), HttpStatus.FORBIDDEN);
+        if(currentGamePlayer.getShip().size() != 0){
+            return new ResponseEntity<>(makeMap("error", "You have already placed ships"), HttpStatus.FORBIDDEN);
         }
         if (ships.size()!=5){
 
-            return new ResponseEntity<>(makeMap("Error", "Wrong number of ships"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMap("error", "Wrong number of ships"), HttpStatus.FORBIDDEN);
         }
         else {
             for (Ship ship : ships){
