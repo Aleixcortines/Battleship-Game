@@ -8,3 +8,17 @@ td {
     height: 50px;
 }
 
+
+.boat {
+    
+    display: inline-block;
+    height: 47px;
+    width: 50px;
+    background-color: hotpink;
+}
+
+
+
+.ships {
+     display:block;
+}
