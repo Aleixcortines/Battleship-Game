@@ -17,6 +17,7 @@ let app = new Vue({
         gameDat: [],
         salvoOpponent: [],
         mySalvoes: [],
+        shipID: null,
     },
 
     methods: {
@@ -161,6 +162,8 @@ let app = new Vue({
 
                     td.setAttribute("id", column[i] + j + tablesHTML);
                     //this will add an ID to match each cell (eg: cell A1 will have the ID="A1" )
+                    td.setAttribute("draggable", "true");
+                   
 
                     tr.appendChild(td);
                     //this bind the builded cells to the rows, whichare themselves built at the first loop
@@ -235,8 +238,8 @@ let app = new Vue({
 
                 for (var j = 0; j < locations.length; j++) {
 
-                    document.getElementById(locations[j] + "table1").style.backgroundColor = '#424245'
 
+                    document.getElementById(locations[j] + "table1").style.backgroundColor = '#424245'
                     shipLocationArray.push(locations[j]);
 
 
@@ -263,12 +266,37 @@ let app = new Vue({
                             document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'red'
 
                         }
-
                     }
-
                 }
             }
 
+        },
+
+        allowDrop: function (ev) {
+
+            console.log("ondragover");
+            //method to drop the element
+            ev.preventDefault();
+
+
+        },
+
+        drag: function (ev) {
+            //capture de type of data and the id that we want to drag (inside bariable shipID)
+            //console.log("drag", ev.target);
+            this.shipID = ev.target.id;
+            console.log(this.shipID);
+
+        },
+        //method to drop elements
+        drop: function (ev) {
+
+            console.log("drop", this.shipID);
+            console.log(ev.target);
+            console.log(ev);
+            // confirmamos que se puede soltar el elemento con metodo preventDefault
+            ev.preventDefault();
+            ev.target.appendChild(document.getElementById(this.shipID));
 
         }
     }
