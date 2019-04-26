@@ -17,7 +17,8 @@ let app = new Vue({
         gameDat: [],
         salvoOpponent: [],
         mySalvoes: [],
-        shipID: null,
+        shipLength: null,
+        shipType: null,
     },
 
     methods: {
@@ -93,8 +94,8 @@ let app = new Vue({
                         "locations": ["E5", "E6"]
                                           },
                     {
-                        "type": "destroyer",
-                        "locations": ["A1", "B1", "C1"]
+                        "type": "submarine",
+                        "locations": ["J1", "J2", "J3"]
                                       }
 
                                 ])
@@ -151,7 +152,7 @@ let app = new Vue({
                 for (var j = 0; j < 11; j++) {
 
                     var td = document.createElement("td");
-
+                    td.classList.add('empty-cell');
                     if (i == 0 && j > 0) {
                         td.textContent = j;
                     } //this will add the content of the first column(the letter)
@@ -159,17 +160,16 @@ let app = new Vue({
                     if (i > 0 && j == 0) {
                         td.textContent = column[i];
                     } //this will add the content of the first row(the numbers)
-
-                    td.setAttribute("id", column[i] + j + tablesHTML);
                     //this will add an ID to match each cell (eg: cell A1 will have the ID="A1" )
-                    td.setAttribute("draggable", "true");
-                   
+                    td.setAttribute("id", column[i] + j + tablesHTML);
 
                     tr.appendChild(td);
                     //this bind the builded cells to the rows, whichare themselves built at the first loop
+
                 }
             }
             tables.appendChild(table);
+
             //td bind to  tr
             // tr bind to tbody
             //tbody bind to table
@@ -230,21 +230,58 @@ let app = new Vue({
                 }
 
             }
+            //print ships on the grid
 
 
             for (var i = 0; i < this.ships.length; i++) {
 
+
+
                 var locations = this.ships[i].Location;
+                var types = this.ships[i].Type;
 
                 for (var j = 0; j < locations.length; j++) {
 
+                    //document.getElementById(locations[j] + "table1").style.backgroundColor = '#424245';
+                    document.getElementById(locations[j] + "table1").classList.add('ship-color');
+                    document.getElementById(locations[j] + "table1").setAttribute('data-shiptype', types);
+                    document.getElementById(locations[j] + "table1").setAttribute('data-shiplength', locations.length);
 
-                    document.getElementById(locations[j] + "table1").style.backgroundColor = '#424245'
+                    //put draggable attribute to the ships
+
+                    if (j == 0) {
+                        document.getElementById(locations[j] + "table1").setAttribute('draggable', 'true');
+                    }
+
+                    if (document.getElementById(locations[j] + "table1").classList.contains('ship-color')) {
+
+                        document.getElementById(locations[j] + "table1").classList.remove('empty-cell');
+                    }
+
+                    let empties = document.getElementsByClassName('empty-cell');
+                    let filled = document.getElementsByClassName('ship-color');
+
+
+                    for (let fill of filled) {
+
+                        fill.addEventListener("dragstart", this.dragStart);
+                        fill.addEventListener("dragend", this.dragEnd);
+                    }
+
+                    for (let empty of empties) {
+                        empty.addEventListener("dragover", this.dragOver);
+                        empty.addEventListener("dragenter", this.dragEnter);
+                        empty.addEventListener("dragleave", this.dragLeave);
+                        empty.addEventListener("drop", this.dragDrop);
+                    }
+
+
                     shipLocationArray.push(locations[j]);
 
-
                 }
+
             }
+
 
             for (var i = 0; i < this.salvoOpponent.length; i++) {
 
@@ -272,33 +309,104 @@ let app = new Vue({
 
         },
 
-        allowDrop: function (ev) {
+        dragStart(e) {
 
-            console.log("ondragover");
-            //method to drop the element
-            ev.preventDefault();
+            console.log("START", e.target.id);
+            //capture the horizontal letter and number 
+            let letter = e.target.id.split("")[0]
+            let number = Number(e.target.id.split("")[1])
 
+
+            console.log(letter)
+            console.log(number)
+
+            this.shipLength = document.getElementById(e.target.id).getAttribute('data-shiplength');
+            this.shipType = document.getElementById(e.target.id).getAttribute('data-shiptype');
+
+            // create a variable to save the IDs of the horizontal ships (example:H5 , H6 )
+            let allIDs = [];
+            for (let i = 0; i < this.shipLength; i++) {
+
+                let newID = letter + (Number(number) + i);
+
+                allIDs.push(newID);
+
+
+            }
+            //disabled all this attributes when drag finish 
+
+            for (let i = 0; i < allIDs.length; i++) {
+                document.getElementById(allIDs[i] + "table1").classList.remove('ship-color');
+                document.getElementById(allIDs[i] + "table1").removeAttribute("draggable");
+                document.getElementById(allIDs[i] + "table1").classList.add('empty-cell')
+            }
 
         },
 
-        drag: function (ev) {
-            //capture de type of data and the id that we want to drag (inside bariable shipID)
-            //console.log("drag", ev.target);
-            this.shipID = ev.target.id;
-            console.log(this.shipID);
+        dragEnd(e) {
+            console.log("END", e.target.id);
 
         },
-        //method to drop elements
-        drop: function (ev) {
 
-            console.log("drop", this.shipID);
-            console.log(ev.target);
-            console.log(ev);
-            // confirmamos que se puede soltar el elemento con metodo preventDefault
-            ev.preventDefault();
-            ev.target.appendChild(document.getElementById(this.shipID));
+
+        dragOver(e) {
+            //dragOver is necessary otherwise the ship goes back to its original place
+            e.preventDefault();
+            console.log("OVER", e.target.id);
+        },
+
+        dragEnter(e) {
+            e.preventDefault();
+            console.log("ENTER", e.target.id);
+            //show the ships here
+            //            e.target.classList.add("shipColor")
+            //            e.target.classList.remove("empty")
+        },
+
+        dragLeave(e) {
+            console.log("LEAVE", e.target.id);
+            let letter = e.target.id.split("")[0]
+            let number = Number(e.target.id.split("")[1])
+
+        },
+
+        dragDrop(e) {
+
+            console.log("DROP", e.target.id);
+
+
+                        let letter = e.target.id.split("")[0]
+                        let number = Number(e.target.id.split("")[1])
+            
+                        let shipCellID = e.target.id;
+                        let types = this.ships;
+            
+            
+                        let allIDs = []
+                        for (let i = 0; i < this.shipLength; i++) {
+                            let newID = letter + (Number(number) + i)
+                            allIDs.push(newID);
+                        }
+            
+                        for (let i = 0; i < allIDs.length; i++) {
+                            document.getElementById(allIDs[i] + "table1").classList.add('ship-color')
+                            document.getElementById(allIDs[i] + "table1").classList.remove('empty-cell')
+                            document.getElementById(allIDs[0] + "table1").setAttribute("draggable", "true");
+                            document.getElementById(allIDs[i] + "table1").getAttribute("data-shiplength");
+                            document.getElementById(allIDs[i] + "table1").getAttribute("data-shiptype");
+            
+                            for (let y = 0; y < types.length; y++) {
+                                if (this.shipType == types[y].Type) {
+                                    types[y].Location = allIDs;
+                                }
+                            }
+                        }
+
+
+
 
         }
+
     }
 
 })
