@@ -24,21 +24,14 @@
 
             <div class="row">
                 <div class="col-sm">
-                    <div class="table table-bordered" id="table1" @drop="drop" @dragover="allowDrop"></div>
+                    <div class="table table-bordered" id="table1"></div>
                 </div>
                 <div class="col-sm">
                     <div class="table table-bordered" id="table2"></div>
                 </div>
-
             </div>
 
-            <div id="pinkBoat" class="ships" draggable="true" @dragstart="drag">
-                <div class="boat"></div>
-                <div class="boat"></div>
-                <div class="boat"></div>
-                <div class="boat"></div>
-                <div class="boat"></div>
-            </div>
+<!--            <div id="pinkBoat" class="ships boat" draggable="true" @dragstart="drag"></div>-->
             <button v-on:click="sendShips()" type="button" class="btn btn-success"> send Ships</button>
 
         </div>
