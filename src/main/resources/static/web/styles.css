@@ -1,7 +1,7 @@
 
 th,
 td {
-    background-color: rgba(12, 9, 249, 0.84);
+   
     text-align: center;
     padding: 0px;
     width: 200px;
@@ -13,7 +13,7 @@ td {
     
     display: inline-block;
     height: 47px;
-    width: 50px;
+    width: 200px;
     background-color: hotpink;
 }
 
@@ -21,4 +21,16 @@ td {
 
 .ships {
      display:block;
+}
+
+/*color of ships when drag and drop*/
+.ship-color {
+    
+    background-color:darkslategrey;
+}
+
+.empty-cell{
+    background-color: rgba(12, 9, 249, 0.84);
+    
+    
 }
