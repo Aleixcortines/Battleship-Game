@@ -19,10 +19,10 @@ let app = new Vue({
         mySalvoes: [],
         shipLength: null,
         shipType: null,
-        original_letter: null,
-        original_number: null,
-        origin_allIDs: [],
-
+        locations: [],
+        types: null,
+        origin_allIDs:[],
+        testallIDs:[],
     },
 
     methods: {
@@ -156,7 +156,9 @@ let app = new Vue({
                 for (var j = 0; j < 11; j++) {
 
                     var td = document.createElement("td");
+                    //add on all the cell the property empty-cell, 
                     td.classList.add('empty-cell');
+
                     if (i == 0 && j > 0) {
                         td.textContent = j;
                     } //this will add the content of the first column(the letter)
@@ -240,27 +242,26 @@ let app = new Vue({
             for (var i = 0; i < this.ships.length; i++) {
 
 
+                this.locations = this.ships[i].Location;
+                this.types = this.ships[i].Type;
 
-                var locations = this.ships[i].Location;
-                var types = this.ships[i].Type;
-
-                for (var j = 0; j < locations.length; j++) {
+                for (var j = 0; j < this.locations.length; j++) {
 
 
-                    document.getElementById(locations[j] + "table1").classList.add('ship-color');
-                    document.getElementById(locations[j] + "table1").setAttribute('data-shiptype', types);
-                    document.getElementById(locations[j] + "table1").setAttribute('data-shiplength', locations.length);
+                    document.getElementById(this.locations[j] + "table1").classList.add('ship-color');
+                    document.getElementById(this.locations[j] + "table1").setAttribute('data-shiptype', this.types);
+                    document.getElementById(this.locations[j] + "table1").setAttribute('data-shiplength', this.locations.length);
 
 
                     //put draggable attribute to the ships
 
                     if (j == 0) {
-                        document.getElementById(locations[j] + "table1").setAttribute('draggable', 'true');
+                        document.getElementById(this.locations[j] + "table1").setAttribute('draggable', 'true');
                     }
 
-                    if (document.getElementById(locations[j] + "table1").classList.contains('ship-color')) {
+                    if (document.getElementById(this.locations[j] + "table1").classList.contains('ship-color')) {
 
-                        document.getElementById(locations[j] + "table1").classList.remove('empty-cell');
+                        document.getElementById(this.locations[j] + "table1").classList.remove('empty-cell');
                     }
 
                     let empties = document.getElementsByClassName('empty-cell');
@@ -281,36 +282,35 @@ let app = new Vue({
                     }
 
 
-                    shipLocationArray.push(locations[j]);
+                    shipLocationArray.push(this.locations[j]);
 
                 }
 
             }
 
-
-            for (var i = 0; i < this.salvoOpponent.length; i++) {
-
-
-                var salvoLocations = this.salvoOpponent[i].Location;
-
-                var salvoTurnOpp = this.salvoOpponent[i].Turn;
-
-                for (var j = 0; j < salvoLocations.length; j++) {
-
-                    document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'yellow'
-                    document.getElementById(salvoLocations[j] + "table1").innerHTML = salvoTurnOpp;
-
-
-                    for (var x = 0; x < shipLocationArray.length; x++) {
-
-                        if (salvoLocations[j].includes(shipLocationArray[x])) {
-
-                            document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'red'
-
-                        }
-                    }
-                }
-            }
+    //            for (var i = 0; i < this.salvoOpponent.length; i++) {
+    //
+    //
+    //                var salvoLocations = this.salvoOpponent[i].Location;
+    //
+    //                var salvoTurnOpp = this.salvoOpponent[i].Turn;
+    //
+    //                for (var j = 0; j < salvoLocations.length; j++) {
+    //
+    //                    document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'yellow'
+    //                    document.getElementById(salvoLocations[j] + "table1").innerHTML = salvoTurnOpp;
+    //
+    //
+    //                    for (var x = 0; x < shipLocationArray.length; x++) {
+    //
+    //                        if (salvoLocations[j].includes(shipLocationArray[x])) {
+    //
+    //                            document.getElementById(salvoLocations[j] + "table1").style.backgroundColor = 'red'
+    //
+    //                        }
+    //                    }
+    //                }
+    //            }
 
         },
 
@@ -320,10 +320,12 @@ let app = new Vue({
             //capture the horizontal letter and number 
             let letter = e.target.id.split("")[0];
             let number = Number(e.target.id.split("")[1]);
+            
+            console.log("putain")
 
 
-            console.log(letter)
-            console.log(number)
+            console.log(letter);
+            console.log(number);
 
             this.shipLength = document.getElementById(e.target.id).getAttribute('data-shiplength');
             this.shipType = document.getElementById(e.target.id).getAttribute('data-shiptype');
@@ -340,22 +342,28 @@ let app = new Vue({
 
             }
             //disabled all this attributes when drag finish 
+            
+            console.log("test123")
 
             console.log(this.origin_allIDs);
 
             for (let i = 0; i < this.origin_allIDs.length; i++) {
 
                 document.getElementById(this.origin_allIDs[i] + "table1").classList.remove('ship-color');
-                document.getElementById(this.origin_allIDs[i] + "table1").removeAttribute("draggable");
+                document.getElementById(this.origin_allIDs[i] + "table1").removeAttribute('draggable');
                 document.getElementById(this.origin_allIDs[i] + "table1").classList.add('empty-cell');
+                document.getElementById(this.origin_allIDs[i] + "table1").removeAttribute('data-shiplength');
+                document.getElementById(this.origin_allIDs[i] + "table1").removeAttribute('data-shiptype');
 
             }
+
 
         },
 
         dragEnter(e) {
             e.preventDefault();
             console.log("ENTER", e.target.id);
+            
 
         },
 
@@ -379,34 +387,43 @@ let app = new Vue({
 
             let letter = e.target.id.split("")[0]
             let number = Number(e.target.id.split("")[1])
-
-            let shipCellID = e.target.id;
+            
+            let allIDs = app.testallIDs;
+            
+            console.log("testabc")
+           
             let types = this.ships;
 
             //en esta variable pondremos los IDs de destino donde dejaremos el barco
-            let allIDs = []
+           
             for (let i = 0; i < this.shipLength; i++) {
                 let newID = letter + (Number(number) + i)
                 allIDs.push(newID);
             }
-
-
+            
+            console.log(allIDs)
 
 
             // si cuando dejamos el barco hay celdas vacías lo pintamos con los valores da la variable local AllIds
             for (let i = 0; i < allIDs.length; i++) {
 
-                if (document.getElementById(allIDs[i] + "table1").getAttribute("class") === "empty-cell") {
+                if (document.getElementById(allIDs[i] + "table1").classList.contains("empty-cell")) {
 
                     console.log('hola de primer if');
 
                     document.getElementById(allIDs[i] + "table1").classList.add('ship-color')
                     document.getElementById(allIDs[i] + "table1").classList.remove('empty-cell')
                     document.getElementById(allIDs[0] + "table1").setAttribute("draggable", "true");
-                    document.getElementById(allIDs[i] + "table1").getAttribute("data-shiplength");
-                    document.getElementById(allIDs[i] + "table1").getAttribute("data-shiptype");
+                    document.getElementById(allIDs[i] + "table1").setAttribute("data-shiplength", this.shipLength);
+                    document.getElementById(allIDs[i] + "table1").setAttribute("data-shiptype", this.shipType);
+                    document.getElementById(allIDs[0] + "table1").addEventListener("dragstart", this.dragStart)
                     //ponemos Ids del barco original a 0
                     this.origin_allIDs = [];
+                    
+                    app.testallIDs = [];
+                    
+                    
+                
 
                     //Caso contrario, hay un barco pintado tomamos el valor de la variable global origin_AllIds del barco original pintado    
 
@@ -424,7 +441,7 @@ let app = new Vue({
                         document.getElementById(this.origin_allIDs[0] + "table1").setAttribute("draggable", "true");
                         document.getElementById(this.origin_allIDs[i] + "table1").getAttribute("data-shiplength");
                         document.getElementById(this.origin_allIDs[i] + "table1").getAttribute("data-shiptype");
-
+                        document.getElementById(this.origin_allIDs[i] + "table1").addEventListener("dragstart", this.dragStart)
                     }
                     //ponemos Ids del barco original a 0
                     this.origin_allIDs = [];
@@ -432,21 +449,18 @@ let app = new Vue({
                     // Alertamos con libreria alertify de que esta accion no esta permitida
 
                     alertify.alert('Alert!', 'You can not overlap your ships!', function () {
-                    
+
                     });
 
                 }
 
-                for (let y = 0; y < types.length; y++) {
-                    if (this.shipType == types[y].Type) {
-                        types[y].Location = allIDs;
-                    }
-                }
+                
             }
 
         },
 
         dragEnd(e) {
+
             console.log("END", e.target.id);
 
         },
