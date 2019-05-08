@@ -22,11 +22,9 @@ let app = new Vue({
         locations: [],
         types: "",
         origin_allIDs: [],
-        testallIDs: [],
         shipCurrentLoc: [],
         shipType: "",
-        fullCell: false,
-        outOfGrid: false,
+
     },
 
     methods: {
@@ -239,7 +237,7 @@ let app = new Vue({
                 }
 
             }
-         
+
 
             for (var i = 0; i < this.salvoOpponent.length; i++) {
 
@@ -329,88 +327,101 @@ let app = new Vue({
 
             console.log("START", e.target.id);
             //capture the horizontal letter and number 
-            let letter = e.target.id.split("")[0];
-            let number = Number(e.target.id.split("")[1]);
+            let shipCellID = e.target.id;
+            let letter = shipCellID.split("")[0];
+            //let number = Number(e.target.id.split("")[1]);
+            
+            let numberbis = shipCellID.split("");
+            let numbertris = (letter + "tableA").split("");
+           
+          for (let x = 0; x < numberbis.length; x++) {
+               for (let c = 0; c < numbertris.length; c++) {
+                    if (numberbis[x] == numbertris[c]) {
+                        numberbis.splice(x, 1);
+                    }
+                }
+            }
+            let numberquis = numberbis.join("");
 
 
-            this.shipLength = document.getElementById(e.target.id).getAttribute('data-shiplength');
-            this.shipType = document.getElementById(e.target.id).getAttribute('data-shiptype');
+            app.shipLength = document.getElementById(e.target.id).getAttribute('data-shiplength');
+            app.shipType = document.getElementById(e.target.id).getAttribute('data-shiptype');
             //in this variable I capture the current location of the ship when the user drag
-            this.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
+            app.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
 
-
-            //check if vertical
             let boatLoc = [];
             let getShipType = document.getElementsByClassName(app.shipType);
 
-            console.log(this.shipType)
-
+            //llenamos en array boatloc las localizaciones del barco de origen, p.e A5tableA
             for (let i = 0; i < getShipType.length; i++) {
                 boatLoc.push(getShipType[i].id)
-                
             }
 
-
-            for (let i = 0; i < boatLoc.lengt; i++) {
-                if (boatLoc[i][0] != boatLoc[i + 1][0]) {
-                    app.isVertical = true;
-                } else {
-                    app.isVertical = false;
-                }
-            }
-
-            if (app.isVertical == false) {
-                for (let i = 0; i < this.shipLength; i++) {
-
-                    let newID = letter + (Number(number) + i);
-
-                    this.origin_allIDs.push(newID);
-
-
-                }
+            //check if vertical
+            //miramos si la letra de la primera y segunda posicion del arrayboatLoc es igual o no
+            //si no lo es, quiere decir que es vertial
+            if (boatLoc[0][0] !== boatLoc[1][0]) {
+                app.isVertical = true;
             } else {
-                for (let i = 0; i < this.shipLength; i++) {
+                //si es igual quiere decir que es horizontal
+                app.isVertical = false;
+            }
+
+            //Con el condicional, guardamos posision origen en variable origin_allIDs, los IDs dependiendo de si es barco horizontal o vertical
+            if (app.isVertical == false) {
+                for (let i = 0; i < app.shipLength; i++) {
+
+                    let newID = letter + (Number(numberquis) + i);
+
+                    app.origin_allIDs.push(newID);
+
+                }
+
+            } else {
+                for (let i = 0; i < app.shipLength; i++) {
                     const letters = "ABCDEFGHIJ";
                     const newLetters = letters.split("");
 
                     for (let y = 0; y < newLetters.length; y++) {
                         if (e.target.id[0] == newLetters[y]) {
-                            let newID = newLetters[y + i] + (Number(number));
-                            this.origin_allIDs.push(newID);
+                            let newID = newLetters[y + i] + (Number(numberquis));
+                            app.origin_allIDs.push(newID);
                         }
                     }
                 }
+            }
 
-                //disabled all this attributes when drag finish 
+            console.log(app.origin_allIDs);
 
-                for (let i = 0; i < this.origin_allIDs.length; i++) {
+            //disabled all this attributes when drag finish 
 
-                    document.getElementById(this.origin_allIDs[i] + "tableA").classList.remove('ship-color');
-                    document.getElementById(this.origin_allIDs[i] + "tableA").removeAttribute('draggable');
-                    document.getElementById(this.origin_allIDs[i] + "tableA").removeAttribute('data-shiplength');
-                    document.getElementById(this.origin_allIDs[i] + "tableA").removeAttribute('data-shiptype');
-                    document.getElementById(this.origin_allIDs[i] + "tableA").removeAttribute("data-shipLocs");
-                    document.getElementById(this.origin_allIDs[i] + "tableA").classList.add('empty-cell');
+            for (let i = 0; i < app.origin_allIDs.length; i++) {
 
-                }
-
+                document.getElementById(app.origin_allIDs[i] + "tableA").classList.remove('ship-color');
+                document.getElementById(app.origin_allIDs[0] + "tableA").removeAttribute('draggable');
+                document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiplength');
+                document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiptype');
+                document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shipLocs');
+                document.getElementById(app.origin_allIDs[i] + "tableA").classList.add('empty-cell');
 
             }
+
         },
+
 
         dragEnter(e) {
             e.preventDefault();
             console.log("ENTER", e.target.id);
 
-            console.log("START", e.target.id);
+
             //capture the horizontal letter and number 
             let letter = e.target.id.split("")[0];
             let number = Number(e.target.id.split("")[1]);
-            
-            let newIDs = []
+
+            let newIDs = [];
 
             //check if vertical
-           
+
             if (app.isVertical == false) {
                 for (let i = 0; i < this.shipLength; i++) {
 
@@ -434,19 +445,24 @@ let app = new Vue({
                 }
 
             }
+
+            console.log(newIDs);
+            //conditional to check if you are out of the grid
+
+
         },
 
         dragOver(e) {
             //dragOver is necessary otherwise the ship goes back to its original place
             e.preventDefault();
             console.log("OVER", e.target.id);
-            
+
             let shipCellID = e.target.id;
             let letter = shipCellID.split("")[0]
             let number = Number(shipCellID.split("")[1])
-            
+
             let newIDs = []
-            
+
             if (app.isVertical == false) {
                 for (let i = 0; i < this.shipLength; i++) {
 
@@ -470,15 +486,15 @@ let app = new Vue({
                 }
 
             }
-            
-            
+
+
         },
 
         dragLeave(e) {
             console.log("LEAVE", e.target.id);
             let letter = e.target.id.split("")[0]
             let number = Number(e.target.id.split("")[1])
-            
+
             let newIDs = []
 
             for (let i = 0; i < this.shipLength; i++) {
@@ -486,22 +502,26 @@ let app = new Vue({
                 newIDs.push(newID)
             }
 
-            if (this.fullCell == false) {
+            if (app.fullCell == false) {
                 for (let i = 0; i < newIDs.length; i++) {
                     if (document.getElementById(newIDs[i]) == null) {
-                        this.outOfGrid = true;
-                        console.log("out of grid")
+                        app.outOfGrid = true;
+
+
+
                     } else if (!document.getElementById(newIDs[i]).classList.contains("ship-color")) {
                         document.getElementById(newIDs[i] + "tableA").classList.remove("ship-color");
-                        document.getElementById(newIDs[i]+ "tableA").classList.remove(app.shipType);
-                        document.getElementById(newIDs[i]+ "tableA").removeAttribute("draggable");
-                        document.getElementById(newIDs[i]+ "tableA").removeAttribute("data-shipLength");
-                        document.getElementById(newIDs[i]+ "tableA").removeAttribute("data-shipType");
-                        document.getElementById(newIDs[i]+ "tableA").removeAttribute("data-shipLocs");
-                        document.getElementById(newIDs[i]+ "tableA").classList.add("empty-cell");
+                        document.getElementById(newIDs[i] + "tableA").classList.remove(app.shipType);
+                        document.getElementById(newIDs[i] + "tableA").removeAttribute("draggable");
+                        document.getElementById(newIDs[i] + "tableA").removeAttribute("data-shipLength");
+                        document.getElementById(newIDs[i] + "tableA").removeAttribute("data-shipType");
+                        document.getElementById(newIDs[i] + "tableA").removeAttribute("data-shipLocs");
+                        document.getElementById(newIDs[i] + "tableA").classList.add("empty-cell");
                     }
                 }
             }
+
+
         },
 
         dragDrop(e) {
@@ -513,26 +533,41 @@ let app = new Vue({
 
 
             let letter = shipCellID.split("")[0]
-            let number = Number(shipCellID.split("")[1])
+            //            let number = Number(shipCellID.split("")[1])
+
+
+            //this allow to use 10 as a number :
+            let numberbis = shipCellID.split("");
+            let numbertris = (letter + "tableA").split("");
+            //
+            for (let x = 0; x < numberbis.length; x++) {
+                for (let c = 0; c < numbertris.length; c++) {
+                    if (numberbis[x] == numbertris[c]) {
+                        numberbis.splice(x, 1);
+                    }
+                }
+            }
+            let numberquis = numberbis.join("");
 
             let newAllIDs = [];
 
-            let types = this.ships;
+            let types = app.ships;
+
 
             if (app.isVertical == false) {
-                for (let i = 0; i < this.shipLength; i++) {
+                for (let i = 0; i < app.shipLength; i++) {
 
-                    let newID = letter + (Number(number) + i)
+                    let newID = letter + (Number(numberquis) + i)
                     newAllIDs.push(newID)
                 }
             } else {
-                for (let i = 0; i < this.shipLength; i++) {
+                for (let i = 0; i < app.shipLength; i++) {
                     const letters = "ABCDEFGHIJ";
                     const newLetters = letters.split("");
 
                     for (let y = 0; y < newLetters.length; y++) {
                         if (e.target.id[0] == newLetters[y]) {
-                            let newID = newLetters[y + i] + (Number(number));
+                            let newID = newLetters[y + i] + (Number(numberquis));
                             newAllIDs.push(newID);
                         }
                     }
@@ -541,67 +576,90 @@ let app = new Vue({
 
             //en esta variable pondremos los IDs de destino donde dejaremos el barco
 
+            //here we prevent the ship to collide inside the grid
+//            let locsOutGrid = [];
+//            let allCellsClear = [];
+//
+//            for (let a = 0; a < newAllIDs.length; a++) {
+//
+//                locsOutGrid.push(document.getElementById(newAllIDs[a] + "tableA"));
+//            
+//                      }
+//            
+//            console.log(locsOutGrid)
+            
+            //           if(!locsOutGrid.includes(null)) {
+            //           for (let y = 0; y < locsOutGrid.length; y++){
+            //
+            //                   if(locsOutGrid[y].classList.contains("empty") == true)
+            //                   {  allCellsClear.push(true)}
+            //                   else
+            //                   { allCellsClear.push(false)}
+            //           }
+            //       }
+            //
+            //
+            //       if (locsOutGrid.includes(null) || allCellsClear.includes(false)) {
+            //
+            //          console.log("1")
+            //           salvo.refillGrid(startingPoint)
+            //          console.log(startingPoint)
+            //
+            //       } else {
+            //          console.log("2")
+            //           salvo.refillGrid(salvo.newAllIDs);
+            //       }
 
-            console.log(newAllIDs)
 
-
-            // si cuando dejamos el barco hay celdas vacías lo pintamos con los valores da la variable local AllIds
-            for (let i = 0; i < newAllIDs.length - 1; i++) {
-
-                if (this.fullCell == true || this.outOfGrid == true) {
-
-                    console.log('hola de primer if');
-                    
-                    for(let i = 0; i < this.origin_allIDs.length; i++){
-                        
-                    document.getElementById(this.origin_allIDs[i] + "tableA").classList.add('ship-color')
-                    document.getElementById(this.origin_allIDs[i] + "tableA").classList.remove('empty-cell')
-                    document.getElementById(this.origin_allIDs[0] + "tableA").setAttribute("draggable", "true");
-                    document.getElementById(this.origin_allIDs[i] + "tableA").setAttribute("data-shiplength", this.shipLength);
-                    document.getElementById(this.origin_allIDs[i] + "tableA").setAttribute("data-shiptype", this.shipType);
-                    /* Listener to call dragstat and star the D & D */
-                    document.getElementById(this.origin_allIDs[0] + "tableA").addEventListener("dragstart", this.dragStart)
-                    }
-
-                    
-                    /* ponemos Ids del barco original a 0 */
-                    this.origin_allIDs = [];
-                    
-                    app.testallIDs = [];
+            for (let j = 0; j < app.origin_allIDs.length; j++) {
 
 
 
-                    /* Caso contrario, hay un barco pintado tomamos el valor de la variable global origin_AllIds del barco original pintado  */
+                document.getElementById(app.origin_allIDs[j] + "tableA").classList.remove('ship-color');
+                document.getElementById(app.origin_allIDs[j] + "tableA").classList.remove(app.shipType);
+                document.getElementById(app.origin_allIDs[j] + "tableA").classList.add('empty-cell');
+                document.getElementById(app.origin_allIDs[0] + "tableA").removeAttribute("draggable", "true");
+                document.getElementById(app.origin_allIDs[j] + "tableA").removeAttribute("data-shiptype", app.shipType);
+                document.getElementById(app.origin_allIDs[j] + "tableA").removeAttribute("data-shiplength", app.origin_allIDs.length);
+                document.getElementById(app.origin_allIDs[j] + "tableA").removeAttribute('data-shipLocs', app.shipCurrentLoc);
 
-                } else if (this.fullCell == false || this.outOfGrid == false){
+                /* Listener to call dragstat and star the D & D */
+                document.getElementById(app.origin_allIDs[0] + "tableA").addEventListener("dragstart", this.dragStart);
+            }
 
 
-                    console.log('hola des de else');
+            /* ponemos Ids del barco original a 0 */
+            app.origin_allIDs = [];
 
-                  
 
-                    for (let i = 0; i < newAllIDs.length; i++) {
+            for (let i = 0; i < newAllIDs.length; i++) {
 
-                        document.getElementById(newAllIDs[i] + "tableA").classList.add('ship-color');
-                        document.getElementById(newAllIDs[i] + "tableA").classList.remove('empty-cell')
-                        document.getElementById(newAllIDs[0] + "tableA").setAttribute("draggable", "true");
-                        document.getElementById(newAllIDs[i] + "tableA").getAttribute("data-shiplength");
-                        document.getElementById(newAllIDs[i] + "tableA").getAttribute("data-shiptype");
-                        document.getElementById(newAllIDs[i] + "tableA").addEventListener("dragstart", this.dragStart)
-                    }
-                    //ponemos Ids del barco original a 0
-                    this.origin_allIDs = [];
-
-                    // Alertamos con libreria alertify de que esta accion no esta permitida
-
-                    alertify.alert('Alert!', 'You can not overlap your ships!', function () {
-
-                    });
-
-                }
-
+                document.getElementById(newAllIDs[i] + "tableA").classList.add('ship-color');
+                document.getElementById(newAllIDs[i] + "tableA").classList.add(app.shipType);
+                document.getElementById(newAllIDs[i] + "tableA").classList.remove('empty-cell')
+                document.getElementById(newAllIDs[0] + "tableA").setAttribute("draggable", "true");
+                //document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiptype");
+                document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiptype", app.shipType);
+                document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shipLocs", newAllIDs);
+                document.getElementById(newAllIDs[i] + "tableA").addEventListener("dragstart", this.dragStart);
+                document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiplength", newAllIDs.length);
 
             }
+
+
+            //ponemos Ids del barco original a 0
+            this.origin_allIDs = [];
+
+            // Alertamos con libreria alertify de que esta accion no esta permitida
+
+            //                    alertify.alert('Alert!', 'You can not overlap your ships!', function () {
+            //
+            //                    });
+
+            //                }
+
+
+            //            }
 
         },
 
@@ -612,5 +670,6 @@ let app = new Vue({
         },
 
     }
+
 
 })
