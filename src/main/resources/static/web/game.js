@@ -24,6 +24,8 @@ let app = new Vue({
         origin_allIDs: [],
         shipCurrentLoc: [],
         shipType: "",
+        occurence: 0,
+        hasBeenDone: false,
 
     },
 
@@ -88,23 +90,23 @@ let app = new Vue({
                 //some ships to send and try to put on the grid
                 body: JSON.stringify([{
                         "type": "destroyer",
-                        "locations": ["A1", "B1", "C1"]
+                        "locations": ["C8", "C9", "C10"]
                         },
                     {
                         "type": "PatrolBoat",
-                        "locations": ["H5", "H6"]
+                        "locations": ["I5", "I6"]
                         },
                     {
                         "type": "carrier",
-                        "locations": ["A5", "A6"]
+                        "locations": ["A5", "B5", "C5", "D5", "E5"]
                                       },
                     {
                         "type": "battleship",
-                        "locations": ["E5", "E6"]
+                        "locations": ["G3", "G4", "G5", "G6"]
                                           },
                     {
                         "type": "submarine",
-                        "locations": ["J1", "J2", "J3"]
+                        "locations": ["D1", "E1", "F1"]
                                       }
 
                                 ])
@@ -134,7 +136,7 @@ let app = new Vue({
 
             this.gamePlayers = vars;
         },
-        //funtion to crate the grid
+        //funtion to crate the grids
         populateTable(tablesHTML) {
 
 
@@ -170,7 +172,13 @@ let app = new Vue({
 
                     if (i > 0 && j == 0) {
                         td.textContent = column[i];
-                    } //this will add the content of the first row(the numbers)
+                    }
+                    //Create the cells outside the grid, letters and numbers
+                    if (i == 0 || j == 0) {
+                        //add the class  outbound to check if the ship is placed out of the grid
+                        td.setAttribute("class", "outbound")
+                    }
+                    //this will add the content of the first row(the numbers)
                     //this will add an ID to match each cell (eg: cell A1 will have the ID="A1" )
                     td.setAttribute("id", column[i] + j + tablesHTML);
 
@@ -281,6 +289,7 @@ let app = new Vue({
 
 
                     document.getElementById(locations[j] + "tableA").classList.add('ship-color');
+                    document.getElementById(locations[0] + "tableA").classList.add('switchOrientation');
                     document.getElementById(locations[j] + "tableA").setAttribute('data-shiptype', types);
                     document.getElementById(locations[j] + "tableA").classList.add(types);
                     document.getElementById(locations[j] + "tableA").setAttribute('data-shiplength', locations.length);
@@ -300,6 +309,7 @@ let app = new Vue({
 
                     let empties = document.getElementsByClassName('empty-cell');
                     let filled = document.getElementsByClassName('ship-color');
+                    let outbound = document.getElementsByClassName('outbound');
 
 
                     for (let fill of filled) {
@@ -315,27 +325,40 @@ let app = new Vue({
                         empty.addEventListener("drop", this.dragDrop);
                     }
 
+                    for (let outbounds of outbound) {
+                        outbounds.addEventListener("dragover", this.dragOver);
+                        outbounds.addEventListener("dragenter", this.dragEnter);
+                    }
+
 
                     shipLocationArray.push(locations[j]);
 
                 }
 
             }
+
+            app.addSwitchOrientation()
+
         },
 
         dragStart(e) {
+
+
+
+            app.occurence = 0;
+            app.hasBeenDone = false;
 
             console.log("START", e.target.id);
             //capture the horizontal letter and number 
             let shipCellID = e.target.id;
             let letter = shipCellID.split("")[0];
             //let number = Number(e.target.id.split("")[1]);
-            
+
             let numberbis = shipCellID.split("");
             let numbertris = (letter + "tableA").split("");
-           
-          for (let x = 0; x < numberbis.length; x++) {
-               for (let c = 0; c < numbertris.length; c++) {
+
+            for (let x = 0; x < numberbis.length; x++) {
+                for (let c = 0; c < numbertris.length; c++) {
                     if (numberbis[x] == numbertris[c]) {
                         numberbis.splice(x, 1);
                     }
@@ -391,13 +414,15 @@ let app = new Vue({
                 }
             }
 
-            console.log(app.origin_allIDs);
 
             //disabled all this attributes when drag finish 
 
             for (let i = 0; i < app.origin_allIDs.length; i++) {
 
                 document.getElementById(app.origin_allIDs[i] + "tableA").classList.remove('ship-color');
+                document.getElementById(app.origin_allIDs[0] + "tableA").classList.remove('switchOrientation');
+                document.getElementById(app.origin_allIDs[0] + "tableA").removeEventListener('click', this.switchOrientation);
+                 document.getElementById(app.origin_allIDs[0] + "tableA").innerHTML="";
                 document.getElementById(app.origin_allIDs[0] + "tableA").removeAttribute('draggable');
                 document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiplength');
                 document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiptype');
@@ -410,11 +435,8 @@ let app = new Vue({
 
 
         dragEnter(e) {
-            e.preventDefault();
-            console.log("ENTER", e.target.id);
 
-
-            //capture the horizontal letter and number 
+            // capture the horizontal letter and number 
             let letter = e.target.id.split("")[0];
             let number = Number(e.target.id.split("")[1]);
 
@@ -446,11 +468,13 @@ let app = new Vue({
 
             }
 
-            console.log(newIDs);
-            //conditional to check if you are out of the grid
+            e.preventDefault();
+            console.log("ENTER", e.target.id);
+
 
 
         },
+
 
         dragOver(e) {
             //dragOver is necessary otherwise the ship goes back to its original place
@@ -488,6 +512,33 @@ let app = new Vue({
             }
 
 
+            let outbound = e.target.getAttribute("class");
+
+            console.log(outbound)
+
+            if (outbound == "outbound" || outbound == "container") {
+
+                console.log("1")
+                console.log(app.hasBeenDone)
+
+
+                if (app.hasBeenDone == false && app.occurence < 1) {
+
+                    console.log("2")
+                    console.log(outbound)
+                    app.makeShips(app.origin_allIDs);
+
+
+
+
+                    // Alert with alertify action that this action is not allowed
+
+                    alertify.alert("ALERT", "Don't go outside the grid!");
+
+                    app.occurence++;
+                    app.hasBeenDone = true
+                }
+            }
         },
 
         dragLeave(e) {
@@ -511,6 +562,9 @@ let app = new Vue({
 
                     } else if (!document.getElementById(newIDs[i]).classList.contains("ship-color")) {
                         document.getElementById(newIDs[i] + "tableA").classList.remove("ship-color");
+                        document.getElementById(newIDs[i] + "tableA").classList.remove('switchOrientation');
+                        document.getElementById(app.origin_allIDs[0] + "tableA").removeEventListener('click', this.switchOrientation);
+                 document.getElementById(app.origin_allIDs[0] + "tableA").innerHTML="";
                         document.getElementById(newIDs[i] + "tableA").classList.remove(app.shipType);
                         document.getElementById(newIDs[i] + "tableA").removeAttribute("draggable");
                         document.getElementById(newIDs[i] + "tableA").removeAttribute("data-shipLength");
@@ -530,11 +584,8 @@ let app = new Vue({
 
             //variable to capture the cell id
             let shipCellID = e.target.id;
-
-
             let letter = shipCellID.split("")[0]
             //            let number = Number(shipCellID.split("")[1])
-
 
             //this allow to use 10 as a number :
             let numberbis = shipCellID.split("");
@@ -548,9 +599,7 @@ let app = new Vue({
                 }
             }
             let numberquis = numberbis.join("");
-
             let newAllIDs = [];
-
             let types = app.ships;
 
 
@@ -574,92 +623,78 @@ let app = new Vue({
                 }
             }
 
-            //en esta variable pondremos los IDs de destino donde dejaremos el barco
+            let locsOutGrid = [];
+            let allCellsClear = [];
+            for (let a = 0; a < newAllIDs.length; a++) {
 
-            //here we prevent the ship to collide inside the grid
-//            let locsOutGrid = [];
-//            let allCellsClear = [];
-//
-//            for (let a = 0; a < newAllIDs.length; a++) {
-//
-//                locsOutGrid.push(document.getElementById(newAllIDs[a] + "tableA"));
-//            
-//                      }
-//            
-//            console.log(locsOutGrid)
-            
-            //           if(!locsOutGrid.includes(null)) {
-            //           for (let y = 0; y < locsOutGrid.length; y++){
-            //
-            //                   if(locsOutGrid[y].classList.contains("empty") == true)
-            //                   {  allCellsClear.push(true)}
-            //                   else
-            //                   { allCellsClear.push(false)}
-            //           }
-            //       }
-            //
-            //
-            //       if (locsOutGrid.includes(null) || allCellsClear.includes(false)) {
-            //
-            //          console.log("1")
-            //           salvo.refillGrid(startingPoint)
-            //          console.log(startingPoint)
-            //
-            //       } else {
-            //          console.log("2")
-            //           salvo.refillGrid(salvo.newAllIDs);
-            //       }
-
-
-            for (let j = 0; j < app.origin_allIDs.length; j++) {
-
-
-
-                document.getElementById(app.origin_allIDs[j] + "tableA").classList.remove('ship-color');
-                document.getElementById(app.origin_allIDs[j] + "tableA").classList.remove(app.shipType);
-                document.getElementById(app.origin_allIDs[j] + "tableA").classList.add('empty-cell');
-                document.getElementById(app.origin_allIDs[0] + "tableA").removeAttribute("draggable", "true");
-                document.getElementById(app.origin_allIDs[j] + "tableA").removeAttribute("data-shiptype", app.shipType);
-                document.getElementById(app.origin_allIDs[j] + "tableA").removeAttribute("data-shiplength", app.origin_allIDs.length);
-                document.getElementById(app.origin_allIDs[j] + "tableA").removeAttribute('data-shipLocs', app.shipCurrentLoc);
-
-                /* Listener to call dragstat and star the D & D */
-                document.getElementById(app.origin_allIDs[0] + "tableA").addEventListener("dragstart", this.dragStart);
+                locsOutGrid.push(document.getElementById(newAllIDs[a] + "tableA"));
             }
 
+            console.log(locsOutGrid);
 
-            /* ponemos Ids del barco original a 0 */
-            app.origin_allIDs = [];
+            if (!locsOutGrid.includes(null)) {
+                for (let y = 0; y < locsOutGrid.length; y++) {
+
+                    if (locsOutGrid[y].classList.contains("empty-cell") == true) {
+                        allCellsClear.push(true)
+                    } else {
+                        allCellsClear.push(false)
+                    }
+                }
+            }
+
+            console.log(allCellsClear);
+
+            if (allCellsClear.includes(false)) {
+
+                for (let j = 0; j < app.origin_allIDs.length; j++) {
 
 
-            for (let i = 0; i < newAllIDs.length; i++) {
 
-                document.getElementById(newAllIDs[i] + "tableA").classList.add('ship-color');
-                document.getElementById(newAllIDs[i] + "tableA").classList.add(app.shipType);
-                document.getElementById(newAllIDs[i] + "tableA").classList.remove('empty-cell')
-                document.getElementById(newAllIDs[0] + "tableA").setAttribute("draggable", "true");
-                //document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiptype");
-                document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiptype", app.shipType);
-                document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shipLocs", newAllIDs);
-                document.getElementById(newAllIDs[i] + "tableA").addEventListener("dragstart", this.dragStart);
-                document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiplength", newAllIDs.length);
+                    document.getElementById(app.origin_allIDs[j] + "tableA").classList.add('ship-color');
+                    document.getElementById(app.origin_allIDs[0] + "tableA").classList.add('switchOrientation');
+                    document.getElementById(app.origin_allIDs[j] + "tableA").classList.add(app.shipType);
+                    document.getElementById(app.origin_allIDs[j] + "tableA").classList.remove('empty-cell');
+                    document.getElementById(app.origin_allIDs[0] + "tableA").setAttribute("draggable", "true");
+                    document.getElementById(app.origin_allIDs[j] + "tableA").setAttribute("data-shiptype", app.shipType);
+                    document.getElementById(app.origin_allIDs[j] + "tableA").setAttribute("data-shiplength", app.origin_allIDs.length);
+                    document.getElementById(app.origin_allIDs[j] + "tableA").setAttribute('data-shipLocs', app.shipCurrentLoc);
+
+                    /* Listener to call dragstat and star the D & D */
+                    document.getElementById(app.origin_allIDs[0] + "tableA").addEventListener("dragstart", this.dragStart);
+                }
+
+                app.addSwitchOrientation()
+                app.origin_allIDs = [];
+
+
+
+            } else {
+                console.log("2")
+
+
+                for (let i = 0; i < newAllIDs.length; i++) {
+
+                    document.getElementById(newAllIDs[i] + "tableA").classList.add('ship-color');
+                    document.getElementById(newAllIDs[0] + "tableA").classList.add('switchOrientation');
+                    document.getElementById(newAllIDs[i] + "tableA").classList.add(app.shipType);
+                    document.getElementById(newAllIDs[i] + "tableA").classList.remove('empty-cell')
+                    document.getElementById(newAllIDs[0] + "tableA").setAttribute("draggable", "true");
+                    //document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiptype");
+                    document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiptype", app.shipType);
+                    document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shipLocs", newAllIDs);
+                    document.getElementById(newAllIDs[i] + "tableA").addEventListener("dragstart", this.dragStart);
+                    document.getElementById(newAllIDs[i] + "tableA").setAttribute("data-shiplength", newAllIDs.length);
+
+                }
+
+
+                app.addSwitchOrientation()
+                this.origin_allIDs = [];
+
 
             }
 
-
-            //ponemos Ids del barco original a 0
-            this.origin_allIDs = [];
-
-            // Alertamos con libreria alertify de que esta accion no esta permitida
-
-            //                    alertify.alert('Alert!', 'You can not overlap your ships!', function () {
-            //
-            //                    });
-
-            //                }
-
-
-            //            }
 
         },
 
@@ -669,7 +704,52 @@ let app = new Vue({
 
         },
 
-    }
+        makeShips(originalIDs) {
 
+
+            for (let j = 0; j < originalIDs.length; j++) {
+
+
+                document.getElementById(originalIDs[j] + "tableA").classList.add('ship-color');
+                document.getElementById(locations[0] + "tableA").classList.add('switchOrientation');
+                document.getElementById(originalIDs[j] + "tableA").classList.add(app.shipType);
+                document.getElementById(originalIDs[j] + "tableA").classList.remove('empty-cell');
+                document.getElementById(originalIDs[0] + "tableA").setAttribute("draggable", "true");
+                document.getElementById(originalIDs[j] + "tableA").setAttribute("data-shiptype", app.shipType);
+                document.getElementById(originalIDs[j] + "tableA").setAttribute("data-shiplength", app.origin_allIDs.length);
+                document.getElementById(originalIDs[j] + "tableA").setAttribute('data-shipLocs', app.shipCurrentLoc);
+                /* Listener to call dragstat and star the D & D */
+                document.getElementById(originalIDs[0] + "tableA").addEventListener("dragstart", this.dragStart);
+            }
+
+            app.addSwitchOrientation();
+            app.origin_allIDs = [];
+
+        },
+
+        addSwitchOrientation() {
+
+            console.log('hola')
+
+            let domForButton = document.getElementsByClassName("switchOrientation");
+
+            // console.log(domForButton.getAttribute("id"))
+
+            for (let i = 0; i < domForButton.length; i++) {
+
+                let data_shipTypeValue = domForButton[i].getAttribute("data-shiptype");
+                let idValue = domForButton[i].getAttribute("id")
+
+                // console.log(domForButton[i].getAttribute("id"))
+
+                domForButton[i].innerHTML = "<img src=./images/round_loop_white_18dp.png width=\'15px\' height=\'15px\' draggable=false data-shiptype=" + data_shipTypeValue + " id=" + idValue + ">";
+                domForButton[i].addEventListener('click', this.switchOrientation);
+
+
+            }
+        },
+
+
+    }
 
 })
