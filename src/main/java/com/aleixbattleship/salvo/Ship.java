@@ -18,7 +18,7 @@ public class Ship {
 
     //define a collection of locations
     @ElementCollection
-    @Column(name="cell")
+    @Column(name="Locations")
     private List<String> Locations = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -28,7 +28,7 @@ public class Ship {
     //constructors
     public Ship(){}
 
-    public Ship (String Type,List Locations){
+    public Ship (String Type, List<String> Locations){
         this.Type=Type;
         this.Locations=Locations;
     }
