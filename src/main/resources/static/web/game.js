@@ -70,8 +70,6 @@ let app = new Vue({
                         //if not, caharge the object gameJson
                     } else {
 
-
-
                         app.gameDat = gameJson;
 
                         app.games = gameJson.game.GamePlayer;
@@ -79,7 +77,6 @@ let app = new Vue({
 
                         if (gameJson.game.Ships.length != 0) {
 
-                            console.log(gameJson.game.Ships)
                             console.log(gameJson.game.Ships)
                             app.ships = gameJson.game.Ships;
                         }
@@ -117,7 +114,7 @@ let app = new Vue({
                 },
 
                 method: "POST",
-                body: JSON.stringify(newLocations)
+                body: JSON.stringify(newLocations),
 
             }).then(function (response) {
                 return response.json();
@@ -292,11 +289,15 @@ let app = new Vue({
             var shipLocationArray = [];
 
             let shipsArray = app.ships;
+            
+            
 
             for (var i = 0; i < shipsArray.length; i++) {
 
-                let locs = shipsArray[i].Locations;
+                let locs = shipsArray[i].locations;
                 let types = shipsArray[i].type;
+                
+                console.log(locs)
 
                 for (var j = 0; j < locs.length; j++) {
 
