@@ -24,6 +24,8 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @RequestMapping("/api")
 public class SalvoController {
+
+
     //Attributes - (Autowired annotation: gets the instance needed, in this case, the Repositories where the instances are saved)
     @Autowired
     private GameRepository gameRepository;
@@ -71,30 +73,37 @@ public class SalvoController {
 
         //method for a list placed ships
     @RequestMapping(value="/games/players/{gamePlayerID}/ships", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> addShips (@PathVariable long gamePlayerID, Authentication authentication, @RequestBody List<Ship> ships){
+    public ResponseEntity<Map<String, Object>> addShips (@PathVariable long gamePlayerID, Authentication authentication, @RequestBody Set<Ship> ships){
 
         GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gamePlayerID);
 
         if (authentication==null){
+            System.out.println("1");
             return new ResponseEntity<>(makeMap("error", "Log in please!"), HttpStatus.UNAUTHORIZED);
         }
         if(currentGamePlayer.getPlayer().getId() != getCurrentPlayer(authentication).getId()){
-
+            System.out.println("2");
             return new ResponseEntity<>(makeMap("error", "You are not authorized to see this GamePlayer"), HttpStatus.UNAUTHORIZED);
         }
 
         if(currentGamePlayer.getShip().size() != 0){
+            System.out.println("3");
             return new ResponseEntity<>(makeMap("error", "You have already placed ships"), HttpStatus.FORBIDDEN);
         }
         if (ships.size()!=5){
-
+            System.out.println("4");
             return new ResponseEntity<>(makeMap("error", "Wrong number of ships"), HttpStatus.FORBIDDEN);
         }
         else {
+
             for (Ship ship : ships){
-                currentGamePlayer.addShip(ship);
+                ship.setGamePlayer(currentGamePlayer);
                 shipRepository.save(ship);
             }
+
+            System.out.println("5");
+            System.out.println(ships);
+
 
             return new ResponseEntity<>(makeMap("Success","Ships placed"),HttpStatus.CREATED);
         }
@@ -164,6 +173,7 @@ public class SalvoController {
 
 
         if (authentication==null){
+            System.out.println();
             return new ResponseEntity<>(makeMap("error", "Log in please!"), HttpStatus.UNAUTHORIZED);
         }
         if (game == null){
@@ -212,7 +222,6 @@ public class SalvoController {
             return gameViewDTO;
     }
 
-
     private Map <String,Object> getGameViewInfo (GamePlayer gamePlayer){
         Map<String,Object> gameInfo = new HashMap<>();
 
@@ -248,7 +257,7 @@ public class SalvoController {
     private Map <String,Object> makeShipDTO (Ship ship){
         Map <String,Object> shipDTO = new HashMap<>();
         shipDTO.put("Type",ship.getType());
-        shipDTO.put("Location",ship.getLocations());
+        shipDTO.put("Locations",ship.getLocations());
         return shipDTO;
     }
 
@@ -257,7 +266,7 @@ public class SalvoController {
 
         Map <String,Object> salvoDTO = new HashMap<>();
         salvoDTO.put("Turn",salvo.getTurn());
-        salvoDTO.put("Location",salvo.getLocations());
+        salvoDTO.put("Locations",salvo.getLocations());
 
 
         return salvoDTO;
