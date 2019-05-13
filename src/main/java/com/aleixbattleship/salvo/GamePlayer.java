@@ -50,7 +50,7 @@ public class GamePlayer {
         //adds the ship to the set of ships for this gameplayer.
         this.ships.add(ship);
     }
-    //gets and sets
+    //gets and setsaddShip
     public Long getId() {
         return id;
     }
