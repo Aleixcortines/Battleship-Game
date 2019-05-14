@@ -22,15 +22,15 @@ public class Salvo {
     //define a collection of locations
     @ElementCollection
     @Column(name="cell")
-    private List<String> Locations = new ArrayList<>();
+    private List<String> locations = new ArrayList<>();
 
 
     //contructor
     public Salvo(){}
 
-    public Salvo (Integer turn,List Locations, GamePlayer gamePlayer){
+    public Salvo (Integer turn,List locations, GamePlayer gamePlayer){
         this.turn=turn;
-        this.Locations=Locations;
+        this.locations=locations;
         this.gamePlayer=gamePlayer;
     }
 
@@ -55,11 +55,11 @@ public class Salvo {
     }
 
     public List<String> getLocations() {
-        return Locations;
+        return locations;
     }
 
     public void setLocations(List<String> locations) {
-        this.Locations = locations;
+        this.locations = locations;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Salvo {
                 "Id=" + Id +
                 ", turn=" + turn +
                 ", gamePlayer=" + gamePlayer +
-                ", Locations=" + Locations +
+                ", locations=" + locations +
                 '}';
     }
 }
