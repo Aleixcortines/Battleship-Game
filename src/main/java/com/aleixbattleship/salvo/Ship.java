@@ -14,12 +14,12 @@ public class Ship {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long Id;
-    private String Type;
+    private String type;
 
     //define a collection of locations
     @ElementCollection
-    @Column(name="Locations")
-    private List<String> Locations = new ArrayList<>();
+    @Column(name="locations")
+    private List<String> locations = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayerId")
@@ -28,33 +28,39 @@ public class Ship {
     //constructors
     public Ship(){}
 
-    public Ship (String Type, List<String> Locations){
-        this.Type=Type;
-        this.Locations=Locations;
+    public Ship (String type, List<String> locations){
+        this.type=type;
+        this.locations=locations;
     }
 
     //methods
     public Long getId() {
+
         return Id;
     }
 
     public String getType() {
-        return Type;
+
+        return type;
     }
 
     public void setType(String type) {
-        Type = type;
+
+        this.type = type;
     }
 
     public List<String> getLocations() {
-        return Locations;
+
+        return locations;
     }
 
     public void setLocations(List<String> locations) {
-        Locations = locations;
+
+        this.locations = locations;
     }
 
     public GamePlayer getGamePlayer() {
+
         return gamePlayer;
     }
 
@@ -65,8 +71,8 @@ public class Ship {
     public String toString() {
         return "Ship{" +
                 "Id=" + Id +
-                ", Type='" + Type + '\'' +
-                ", Locations=" + Locations +
+                ", type='" + type + '\'' +
+                ", locations=" + locations +
                 ", gamePlayer=" + gamePlayer +
                 '}';
     }
