@@ -256,8 +256,8 @@ public class SalvoController {
 
     private Map <String,Object> makeShipDTO (Ship ship){
         Map <String,Object> shipDTO = new HashMap<>();
-        shipDTO.put("Type",ship.getType());
-        shipDTO.put("Locations",ship.getLocations());
+        shipDTO.put("type",ship.getType());
+        shipDTO.put("locations",ship.getLocations());
         return shipDTO;
     }
 
@@ -266,7 +266,7 @@ public class SalvoController {
 
         Map <String,Object> salvoDTO = new HashMap<>();
         salvoDTO.put("Turn",salvo.getTurn());
-        salvoDTO.put("Locations",salvo.getLocations());
+        salvoDTO.put("locations",salvo.getLocations());
 
 
         return salvoDTO;
