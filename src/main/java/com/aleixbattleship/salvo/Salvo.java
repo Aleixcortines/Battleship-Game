@@ -24,14 +24,12 @@ public class Salvo {
     @Column(name="cell")
     private List<String> locations = new ArrayList<>();
 
-
     //contructor
     public Salvo(){}
 
-    public Salvo (Integer turn,List locations, GamePlayer gamePlayer){
+    public Salvo (Integer turn,List locations){
         this.turn=turn;
         this.locations=locations;
-        this.gamePlayer=gamePlayer;
     }
 
     //methods
