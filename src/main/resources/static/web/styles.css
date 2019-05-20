@@ -29,14 +29,15 @@ td {
     background-color:darkslategrey;
 }
 
+/*color on the sea*/
 .empty-cell{
-    background-color: rgba(12, 9, 249, 0.84);
-    
-    
+    background-color: rgba(12, 9, 249, 0.84);  
 }
 
-
-
+.mysalvo {
+    
+    background-color: darkgreen;
+}
 
 
 .container {
