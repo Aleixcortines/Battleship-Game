@@ -2,7 +2,7 @@ let app = new Vue({
     el: "#app",
     mounted() {
         this.populateTable("tableA");
-        this.populateTable("table2");
+        this.populateTable("tableB");
         this.getID();
         this.getData();
 
@@ -78,22 +78,20 @@ let app = new Vue({
 
                         if (gameJson.game.Ships.length != 0) {
                             app.allowDragging = false;
-                            console.log(gameJson.game.Ships)
                             app.ships = gameJson.game.Ships;
                         }
 
                         app.showShips();
 
-                        app.salvoOpponent = gameJson.game.opponentSalvoes;
+                        app.salvoOpponent = gameJson.game.opponentSalvos;
 
-                        app.mySalvoes = gameJson.game.mySalvoes;
+                        console.log(gameJson.game)
+
+                        app.mySalvoes = gameJson.game.mySalvos;
 
                         app.gameVs();
 
                         app.printSalvoesOpponent();
-
-
-
 
 
                     }
@@ -102,7 +100,7 @@ let app = new Vue({
                 .catch(error => console.log(error))
         },
 
-        //method to obtain the first view of ships, then you can drag and drop the ships
+        //method to send the ships on the back end to save
         sendShips() {
 
             let newLocations = app.ships;
@@ -129,12 +127,11 @@ let app = new Vue({
                 if (gameJson.hasOwnProperty('error')) {
                     alert(gameJson.error)
                 } else {
-
-
+                    
                     window.location.reload(true)
 
                 }
-               
+
             }).catch(function (error) {
 
 
@@ -143,6 +140,12 @@ let app = new Vue({
 
 
 
+        },
+        //method to send the ships on the back end to save
+        sendSalvoes(){
+            let salvoes = document.getElementsByClassName("mysalvo");
+
+            console.log(salvoes)
         },
 
         //function to take de gamePlayers ID
@@ -157,7 +160,7 @@ let app = new Vue({
             this.gamePlayers = vars;
         },
 
-    
+
         //funtion to crate the grids
         populateTable(tablesHTML) {
 
@@ -175,7 +178,6 @@ let app = new Vue({
 
             for (var i = 0; i < 11; i++) {
 
-
                 var tr = document.createElement("tr");
 
                 tbody.appendChild(tr);
@@ -187,6 +189,12 @@ let app = new Vue({
                     var td = document.createElement("td");
                     //add on all the cell the property empty-cell, 
                     td.classList.add('empty-cell');
+
+                    //add the event click on table B to goes on markerSalvoes function (to mark my salvoes)
+                    if (tablesHTML == "tableB") {
+
+                        td.addEventListener('click', this.markerSalvoes)
+                    }
 
                     if (i == 0 && j > 0) {
                         td.textContent = j;
@@ -252,250 +260,255 @@ let app = new Vue({
 
         printSalvoesOpponent() {
 
-            for (var s = 0; s < this.mySalvoes.length; s++) {
+                let mysalvos = app.mySalvoes;
 
-                var mySalvoLocation = this.mySalvoes[s].Location;
+                let salvosOp = app.salvoOpponent;
 
-                var mySalvoTurn = this.mySalvoes[s].Turn;
+                for (let s = 0; s < mysalvos.length; s++) {
 
+                    let mySalvoLocation = mysalvos[s].locations;
 
-                for (var l = 0; l < mySalvoLocation.length; l++) {
-
-                    document.getElementById(mySalvoLocation[l] + "table2").style.backgroundColor = 'yellow'
-
-                    document.getElementById(mySalvoLocation[l] + "table2").innerHTML = mySalvoTurn;
-                }
-
-            }
+                    let mySalvoTurn = mysalvos[s].turn;
 
 
-            for (var i = 0; i < this.salvoOpponent.length; i++) {
+                    for (let l = 0; l < mySalvoLocation.length; l++) {
 
+                        document.getElementById(mySalvoLocation[l] + "tableB").style.backgroundColor = 'yellow'
 
-                var salvoLocations = this.salvoOpponent[i].Location;
-
-                var salvoTurnOpp = this.salvoOpponent[i].Turn;
-
-                for (var j = 0; j < salvoLocations.length; j++) {
-
-                    document.getElementById(salvoLocations[j] + "tableA").style.backgroundColor = 'yellow'
-                    document.getElementById(salvoLocations[j] + "tableA").innerHTML = salvoTurnOpp;
-
-
-                    for (var x = 0; x < shipLocationArray.length; x++) {
-
-                        if (salvoLocations[j].includes(shipLocationArray[x])) {
-
-                            document.getElementById(salvoLocations[j] + "tableA").style.backgroundColor = 'red'
-
-                        }
-                    }
-                }
-            }
-
-        },
-
-        showShips() {
-
-
-            var shipLocationArray = [];
-
-            let shipsArray = app.ships;
-
-
-
-            for (var i = 0; i < shipsArray.length; i++) {
-
-                let locs = shipsArray[i].locations;
-                let types = shipsArray[i].type;
-
-
-                for (var j = 0; j < locs.length; j++) {
-
-
-                    document.getElementById(locs[j] + "tableA").classList.add('ship-color');                
-                    document.getElementById(locs[j] + "tableA").setAttribute('data-shiptype', types);
-                    document.getElementById(locs[j] + "tableA").classList.add(types);
-                    document.getElementById(locs[j] + "tableA").setAttribute('data-shiplength', locs.length);
-                    document.getElementById(locs[j] + "tableA").setAttribute('data-shipLocs', locs);
-
-
-                    //put draggable attribute to all the grid
-
-                    if (j == 0 && app.allowDragging) {
-                        document.getElementById(locs[j] + "tableA").setAttribute('draggable', 'true');
+                        document.getElementById(mySalvoLocation[l] + "tableB").innerHTML = mySalvoTurn;
                     }
 
-                    if (document.getElementById(locs[j] + "tableA").classList.contains('ship-color')) {
-
-                        document.getElementById(locs[j] + "tableA").classList.remove('empty-cell');
-                    }
-
-                    let empties = document.getElementsByClassName('empty-cell');
-                    let filled = document.getElementsByClassName('ship-color');
-                    let outbound = document.getElementsByClassName('outbound');
-                    
-                    if (app.allowDragging) {
-                          document.getElementById(locs[0] + "tableA").classList.add('switchOrientation');
-                        for (let fill of filled) {
-
-                            fill.addEventListener("dragstart", this.dragStart);
-                            fill.addEventListener("dragend", this.dragEnd);
-                        }
-
-                        for (let empty of empties) {
-                            empty.addEventListener("dragover", this.dragOver);
-                            empty.addEventListener("dragenter", this.dragEnter);
-                            empty.addEventListener("dragleave", this.dragLeave);
-                            empty.addEventListener("drop", this.dragDrop);
-                        }
-
-                        for (let outbounds of outbound) {
-                            outbounds.addEventListener("dragover", this.dragOver);
-                            outbounds.addEventListener("dragenter", this.dragEnter);
-                        }
-
-                    }
-                    shipLocationArray.push(locs[j]);
-
                 }
 
-            }
 
-            app.addSwitchOrientation();
-
-        },
-
-        dragStart(e) {
-
-            app.occurence = 0;
-            app.hasBeenDone = false;
-
-            console.log("START", e.target.id);
-            //capture the horizontal letter and number 
-            let shipCellID = e.target.id;
-            let letter = shipCellID.split("")[0];
-            //let number = Number(e.target.id.split("")[1]);
-
-            let numberbis = shipCellID.split("");
-            let numbertris = (letter + "tableA").split("");
-
-            for (let x = 0; x < numberbis.length; x++) {
-                for (let c = 0; c < numbertris.length; c++) {
-                    if (numberbis[x] == numbertris[c]) {
-                        numberbis.splice(x, 1);
-                    }
-                }
-            }
-            let numberquis = numberbis.join("");
+                for (let i = 0; i < salvosOp.length; i++) {
 
 
-            app.shipLength = document.getElementById(e.target.id).getAttribute('data-shiplength');
-            app.shipType = document.getElementById(e.target.id).getAttribute('data-shiptype');
-            //in this variable I capture the current location of the ship when the user drag
-            app.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
+                    let salvoLocations = salvosOp[i].Location;
 
-            let boatLoc = [];
-            let getShipType = document.getElementsByClassName(app.shipType);
+                    let salvoTurnOpp = salvosOp[i].Turn;
 
-            //llenamos en array boatloc las localizaciones del barco de origen, p.e A5tableA
-            for (let i = 0; i < getShipType.length; i++) {
-                boatLoc.push(getShipType[i].id)
-            }
+                    for (var j = 0; j < salvoLocations.length; j++) {
 
-            //check if vertical
-            //miramos si la letra de la primera y segunda posicion del arrayboatLoc es igual o no
-            //si no lo es, quiere decir que es vertial
-            if (boatLoc[0][0] !== boatLoc[1][0]) {
-                app.isVertical = true;
-            } else {
-                //si es igual quiere decir que es horizontal
-                app.isVertical = false;
-            }
-            //Con el condicional, guardamos posision origen en variable origin_allIDs, los IDs dependiendo de si es barco horizontal o vertical
-            if (app.isVertical == false) {
-                for (let i = 0; i < app.shipLength; i++) {
-
-                    let newID = letter + (Number(numberquis) + i);
-
-                    app.origin_allIDs.push(newID);
-
-                }
-
-            } else {
-                for (let i = 0; i < app.shipLength; i++) {
-                    const letters = "ABCDEFGHIJ";
-                    const newLetters = letters.split("");
-
-                    for (let y = 0; y < newLetters.length; y++) {
-                        if (e.target.id[0] == newLetters[y]) {
-                            let newID = newLetters[y + i] + (Number(numberquis));
-                            app.origin_allIDs.push(newID);
-                        }
-                    }
-                }
-            }
+                        document.getElementById(salvoLocations[j] + "tableA").style.backgroundColor = 'yellow'
+                        document.getElementById(salvoLocations[j] + "tableA").innerHTML = salvoTurnOpp;
 
 
-            //disabled all this attributes when drag finish 
+                        for (var x = 0; x < shipLocationArray.length; x++) {
 
-            for (let i = 0; i < app.origin_allIDs.length; i++) {
+                            if (salvoLocations[j].includes(shipLocationArray[x])) {
 
-                document.getElementById(app.origin_allIDs[i] + "tableA").classList.remove('ship-color');
-                document.getElementById(app.origin_allIDs[0] + "tableA").classList.remove('switchOrientation');
-                document.getElementById(app.origin_allIDs[0] + "tableA").removeEventListener('click', this.switchOrientation);
-                document.getElementById(app.origin_allIDs[0] + "tableA").innerHTML = "";
-                document.getElementById(app.origin_allIDs[0] + "tableA").removeAttribute('draggable');
-                document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiplength');
-                document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiptype');
-                document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shipLocs');
-                document.getElementById(app.origin_allIDs[i] + "tableA").classList.add('empty-cell');
+                                document.getElementById(salvoLocations[j] + "tableA").style.backgroundColor = 'red'
 
-            }
-
-        },
-
-
-        dragEnter(e) {
-
-            // capture the horizontal letter and number 
-            let letter = e.target.id.split("")[0];
-            let number = Number(e.target.id.split("")[1]);
-
-            let newIDs = [];
-
-            //check if vertical
-
-            if (app.isVertical == false) {
-                for (let i = 0; i < this.shipLength; i++) {
-
-                    let newID = letter + (Number(number) + i);
-
-                    newIDs.push(newID);
-
-
-                }
-            } else {
-                for (let i = 0; i < this.shipLength; i++) {
-                    const letters = "ABCDEFGHIJ";
-                    const newLetters = letters.split("");
-
-                    for (let y = 0; y < newLetters.length; y++) {
-                        if (e.target.id[0] == newLetters[y]) {
-                            let newID = newLetters[y + i] + (Number(number));
-                            newIDs.push(newID);
+                            }
                         }
                     }
                 }
 
-            }
-
-            e.preventDefault();
-            console.log("ENTER", e.target.id);
+            },
 
 
+            showShips() {
 
-        },
+
+                var shipLocationArray = [];
+
+                let shipsArray = app.ships;
+
+
+
+                for (var i = 0; i < shipsArray.length; i++) {
+
+                    let locs = shipsArray[i].locations;
+                    let types = shipsArray[i].type;
+
+
+                    for (var j = 0; j < locs.length; j++) {
+
+
+                        document.getElementById(locs[j] + "tableA").classList.add('ship-color');
+                        document.getElementById(locs[j] + "tableA").setAttribute('data-shiptype', types);
+                        document.getElementById(locs[j] + "tableA").classList.add(types);
+                        document.getElementById(locs[j] + "tableA").setAttribute('data-shiplength', locs.length);
+                        document.getElementById(locs[j] + "tableA").setAttribute('data-shipLocs', locs);
+
+
+                        //put draggable attribute to all the grid
+
+                        if (j == 0 && app.allowDragging) {
+                            document.getElementById(locs[j] + "tableA").setAttribute('draggable', 'true');
+                        }
+
+                        if (document.getElementById(locs[j] + "tableA").classList.contains('ship-color')) {
+
+                            document.getElementById(locs[j] + "tableA").classList.remove('empty-cell');
+                        }
+
+                        let empties = document.getElementsByClassName('empty-cell');
+                        let filled = document.getElementsByClassName('ship-color');
+                        let outbound = document.getElementsByClassName('outbound');
+
+                        if (app.allowDragging) {
+                            document.getElementById(locs[0] + "tableA").classList.add('switchOrientation');
+                            for (let fill of filled) {
+
+                                fill.addEventListener("dragstart", this.dragStart);
+                                fill.addEventListener("dragend", this.dragEnd);
+                            }
+
+                            for (let empty of empties) {
+                                empty.addEventListener("dragover", this.dragOver);
+                                empty.addEventListener("dragenter", this.dragEnter);
+                                empty.addEventListener("dragleave", this.dragLeave);
+                                empty.addEventListener("drop", this.dragDrop);
+                            }
+
+                            for (let outbounds of outbound) {
+                                outbounds.addEventListener("dragover", this.dragOver);
+                                outbounds.addEventListener("dragenter", this.dragEnter);
+                            }
+
+                        }
+                        shipLocationArray.push(locs[j]);
+
+                    }
+
+                }
+
+                app.addSwitchOrientation();
+
+            },
+
+            dragStart(e) {
+
+                app.occurence = 0;
+                app.hasBeenDone = false;
+
+                console.log("START", e.target.id);
+                //capture the horizontal letter and number 
+                let shipCellID = e.target.id;
+                let letter = shipCellID.split("")[0];
+                //let number = Number(e.target.id.split("")[1]);
+
+                let numberbis = shipCellID.split("");
+                let numbertris = (letter + "tableA").split("");
+
+                for (let x = 0; x < numberbis.length; x++) {
+                    for (let c = 0; c < numbertris.length; c++) {
+                        if (numberbis[x] == numbertris[c]) {
+                            numberbis.splice(x, 1);
+                        }
+                    }
+                }
+                let numberquis = numberbis.join("");
+
+
+                app.shipLength = document.getElementById(e.target.id).getAttribute('data-shiplength');
+                app.shipType = document.getElementById(e.target.id).getAttribute('data-shiptype');
+                //in this variable I capture the current location of the ship when the user drag
+                app.shipCurrentLoc = document.getElementById(e.target.id).getAttribute("data-shipLocs");
+
+                let boatLoc = [];
+                let getShipType = document.getElementsByClassName(app.shipType);
+
+                //llenamos en array boatloc las localizaciones del barco de origen, p.e A5tableA
+                for (let i = 0; i < getShipType.length; i++) {
+                    boatLoc.push(getShipType[i].id)
+                }
+
+                //check if vertical
+                //miramos si la letra de la primera y segunda posicion del arrayboatLoc es igual o no
+                //si no lo es, quiere decir que es vertial
+                if (boatLoc[0][0] !== boatLoc[1][0]) {
+                    app.isVertical = true;
+                } else {
+                    //si es igual quiere decir que es horizontal
+                    app.isVertical = false;
+                }
+                //Con el condicional, guardamos posision origen en variable origin_allIDs, los IDs dependiendo de si es barco horizontal o vertical
+                if (app.isVertical == false) {
+                    for (let i = 0; i < app.shipLength; i++) {
+
+                        let newID = letter + (Number(numberquis) + i);
+
+                        app.origin_allIDs.push(newID);
+
+                    }
+
+                } else {
+                    for (let i = 0; i < app.shipLength; i++) {
+                        const letters = "ABCDEFGHIJ";
+                        const newLetters = letters.split("");
+
+                        for (let y = 0; y < newLetters.length; y++) {
+                            if (e.target.id[0] == newLetters[y]) {
+                                let newID = newLetters[y + i] + (Number(numberquis));
+                                app.origin_allIDs.push(newID);
+                            }
+                        }
+                    }
+                }
+
+
+                //disabled all this attributes when drag finish 
+
+                for (let i = 0; i < app.origin_allIDs.length; i++) {
+
+                    document.getElementById(app.origin_allIDs[i] + "tableA").classList.remove('ship-color');
+                    document.getElementById(app.origin_allIDs[0] + "tableA").classList.remove('switchOrientation');
+                    document.getElementById(app.origin_allIDs[0] + "tableA").removeEventListener('click', this.switchOrientation);
+                    document.getElementById(app.origin_allIDs[0] + "tableA").innerHTML = "";
+                    document.getElementById(app.origin_allIDs[0] + "tableA").removeAttribute('draggable');
+                    document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiplength');
+                    document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shiptype');
+                    document.getElementById(app.origin_allIDs[i] + "tableA").removeAttribute('data-shipLocs');
+                    document.getElementById(app.origin_allIDs[i] + "tableA").classList.add('empty-cell');
+
+                }
+
+            },
+
+
+            dragEnter(e) {
+
+                // capture the horizontal letter and number 
+                let letter = e.target.id.split("")[0];
+                let number = Number(e.target.id.split("")[1]);
+
+                let newIDs = [];
+
+                //check if vertical
+
+                if (app.isVertical == false) {
+                    for (let i = 0; i < this.shipLength; i++) {
+
+                        let newID = letter + (Number(number) + i);
+
+                        newIDs.push(newID);
+
+
+                    }
+                } else {
+                    for (let i = 0; i < this.shipLength; i++) {
+                        const letters = "ABCDEFGHIJ";
+                        const newLetters = letters.split("");
+
+                        for (let y = 0; y < newLetters.length; y++) {
+                            if (e.target.id[0] == newLetters[y]) {
+                                let newID = newLetters[y + i] + (Number(number));
+                                newIDs.push(newID);
+                            }
+                        }
+                    }
+
+                }
+
+                e.preventDefault();
+                console.log("ENTER", e.target.id);
+
+
+
+            },
 
 
         dragOver(e) {
@@ -721,7 +734,6 @@ let app = new Vue({
                 }
             }
 
-
             app.addSwitchOrientation();
             app.origin_allIDs = [];
             app.newAllIDs = [];
@@ -729,8 +741,6 @@ let app = new Vue({
             console.log(app.ships)
 
         },
-
-
 
         addSwitchOrientation() {
 
@@ -748,9 +758,29 @@ let app = new Vue({
                 domForButton[i].innerHTML = "<img src=./images/round_loop_white_18dp.png width=\'15px\' height=\'15px\' draggable=false data-shiptype=" + data_shipTypeValue + " id=" + idValue + ">";
                 domForButton[i].addEventListener('click', app.switchOrientation);
 
-
             }
         },
+
+        markerSalvoes(e) {
+
+            
+            
+            let shipCellID = e.target.id;
+            
+            if (!document.getElementById(shipCellID).classList.contains("mysalvo")) {
+
+                if (document.getElementsByClassName("mysalvo").length <= 4) {
+
+                    document.getElementById(shipCellID).classList.add("mysalvo");
+                }
+
+            } else {
+
+                document.getElementById(shipCellID).classList.remove("mysalvo");
+            }
+
+
+        }
 
     }
 
