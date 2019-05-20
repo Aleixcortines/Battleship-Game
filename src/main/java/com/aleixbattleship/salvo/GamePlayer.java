@@ -38,8 +38,6 @@ public class GamePlayer {
     public GamePlayer(){}
 
     public GamePlayer(Game game,Player player){
-//    this.id=id;
-//    this.date=date;
     this.game=game;
     this.player=player;
     }
@@ -87,6 +85,12 @@ public class GamePlayer {
     public Set<Salvo> getSalvo(){return salvos;}
 
     public void setSalvos(Set<Salvo> salvos) { this.salvos = salvos; }
+
+    //method to add salvos
+    public void addSalvo(Salvo salvo) {
+        salvo.setGamePlayer(this);
+        this.salvos.add(salvo);
+    }
 
     public Score getScore(){
         return this.getPlayer().getScores().stream().filter(score -> score.getGame().equals(this.getGame())).findFirst().orElse(null);
