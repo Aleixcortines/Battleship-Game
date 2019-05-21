@@ -193,7 +193,9 @@ let app = new Vue({
                     //add the event click on table B to goes on markerSalvoes function (to mark my salvoes)
                     if (tablesHTML == "tableB") {
 
-                        td.addEventListener('click', this.markerSalvoes)
+                        /* td.setAttribute("onmouseover","style.backgroundColor='darkgreen'");
+                        td.setAttribute("onmouseout","style.backgroundColor='rgba(12, 9, 249, 0.84)'"); */
+                        td.addEventListener('click', this.markerSalvoes);
                     }
 
                     if (i == 0 && j > 0) {
