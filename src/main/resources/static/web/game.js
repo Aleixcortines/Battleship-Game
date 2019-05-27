@@ -16,6 +16,7 @@ let app = new Vue({
         gameDat: [],
         salvoOpponent: [],
         mySalvoes: [],
+        salvoLocations:[],
         shipLength: null,
         isVertical: false,
         shipLocs: [],
@@ -105,7 +106,6 @@ let app = new Vue({
 
             let newLocations = app.ships;
 
-
             // " + this.gamePlayers + "  to obtain the id of the game player
             fetch("/api/games/players/" + this.gamePlayers + "/ships", {
 
@@ -119,7 +119,6 @@ let app = new Vue({
                 body: JSON.stringify(newLocations)
 
             }).then(function (response) {
-
 
                 return response.json();
             }).then(function (gameJson) {
@@ -143,9 +142,48 @@ let app = new Vue({
         },
         //method to send the ships on the back end to save
         sendSalvoes(){
+
             let salvoes = document.getElementsByClassName("mysalvo");
 
-            console.log(salvoes)
+            //first, we will put only the salvos locations in array
+
+        for (let i = 0; i<salvoes.length;i++ ){
+            
+            this.salvoLocations.push(salvoes[i].getAttribute("id").slice(0,2))
+            }
+            console.log(this.salvoLocations);
+
+            //then, make the fetch to send the salvolocations on the back end
+
+            fetch("/api/games/players/" + this.gamePlayers + "/salvos", {
+
+                method: "POST",
+                cache: 'default',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(this.salvoLocations)
+
+            }).then(function (response) {
+
+                return response.json();
+            }).then(function (gameJson) {
+
+                if (gameJson.hasOwnProperty('error')) {
+                    alert(gameJson.error)
+                } else {
+                    
+                    window.location.reload(true)
+
+                }
+
+            }).catch(function (error) {
+
+                console.log('Request failure:', error)
+            });
+
         },
 
         //function to take de gamePlayers ID
@@ -193,9 +231,9 @@ let app = new Vue({
                     //add the event click on table B to goes on markerSalvoes function (to mark my salvoes)
                     if (tablesHTML == "tableB") {
 
-                        /* td.setAttribute("onmouseover","style.backgroundColor='darkgreen'");
-                        td.setAttribute("onmouseout","style.backgroundColor='rgba(12, 9, 249, 0.84)'"); */
                         td.addEventListener('click', this.markerSalvoes);
+                       /*  td.setAttribute("onmouseover", this.checkMouseover);
+                        td.setAttribute("onmouseout",this.checkMouseout);  */   
                     }
 
                     if (i == 0 && j > 0) {
@@ -227,9 +265,8 @@ let app = new Vue({
             // and now, we are pushing the table to the body , which is the ID of the div in HTMl page
         },
 
+
         gameVs() {
-
-
 
             let playersGameId = document.getElementById("playersGame");
 
@@ -275,13 +312,13 @@ let app = new Vue({
 
                     for (let l = 0; l < mySalvoLocation.length; l++) {
 
-                        document.getElementById(mySalvoLocation[l] + "tableB").style.backgroundColor = 'yellow'
+                        //S'ha de fer ---> remove empty cell
+
+                        document.getElementById(mySalvoLocation[l] + "tableB").classList.add('shot');
 
                         document.getElementById(mySalvoLocation[l] + "tableB").innerHTML = mySalvoTurn;
                     }
-
                 }
-
 
                 for (let i = 0; i < salvosOp.length; i++) {
 
@@ -292,7 +329,7 @@ let app = new Vue({
 
                     for (var j = 0; j < salvoLocations.length; j++) {
 
-                        document.getElementById(salvoLocations[j] + "tableA").style.backgroundColor = 'yellow'
+                        document.getElementById(salvoLocations[j] + "tableA").classList.add('shot');
                         document.getElementById(salvoLocations[j] + "tableA").innerHTML = salvoTurnOpp;
 
 
@@ -508,8 +545,6 @@ let app = new Vue({
                 e.preventDefault();
                 console.log("ENTER", e.target.id);
 
-
-
             },
 
 
@@ -548,7 +583,6 @@ let app = new Vue({
 
             }
 
-
             let outbound = e.target.getAttribute("class");
 
             console.log(outbound)
@@ -558,14 +592,11 @@ let app = new Vue({
                 console.log("1")
                 console.log(app.hasBeenDone)
 
-
                 if (app.hasBeenDone == false && app.occurence < 1) {
 
                     console.log("2")
                     console.log(outbound)
                     app.makeShips(app.origin_allIDs);
-
-
 
 
                     // Alert with alertify action that this action is not allowed
@@ -764,16 +795,17 @@ let app = new Vue({
         },
 
         markerSalvoes(e) {
-
-            
-            
+ 
             let shipCellID = e.target.id;
-            
-            if (!document.getElementById(shipCellID).classList.contains("mysalvo")) {
+            console.log(shipCellID)
+            if (!document.getElementById(shipCellID).classList.contains("mysalvo") ) {
 
                 if (document.getElementsByClassName("mysalvo").length <= 4) {
-
+                   
                     document.getElementById(shipCellID).classList.add("mysalvo");
+
+                    //S'ha de fer ---> remove empty cell
+
                 }
 
             } else {
@@ -781,10 +813,8 @@ let app = new Vue({
                 document.getElementById(shipCellID).classList.remove("mysalvo");
             }
 
-
-        }
+        },
 
     }
-
 
 })
