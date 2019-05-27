@@ -106,7 +106,6 @@ public class SalvoController {
             System.out.println("5");
             System.out.println(ships);
 
-
             return new ResponseEntity<>(makeMap("Success","Ships placed"),HttpStatus.CREATED);
         }
     }
@@ -152,6 +151,9 @@ public ResponseEntity <Map<String,Object>> addSalvos (@PathVariable Long gamePla
         Salvo salvo = new Salvo(gamePlayerTurn,salvos);
         currentGamePlayer.addSalvo(salvo);
         salvoRepository.save(salvo);
+
+        System.out.println("5");
+        System.out.println(salvo);
 
         return new ResponseEntity<>(makeMap("Ok","Salvo locations have been saved"),HttpStatus.CREATED);
 
@@ -298,6 +300,8 @@ public ResponseEntity <Map<String,Object>> addSalvos (@PathVariable Long gamePla
                     .stream()
                     .map(salvo -> makeSalvoDTO(salvo))
                     .collect(toList()));
+            gameInfo.put("sinkEnemy", sinkShip(gamePlayer));
+            gameInfo.put("ownSink", sinkShip(getOpponent(gamePlayer)));
         }
 
         return gameInfo;
@@ -315,10 +319,41 @@ public ResponseEntity <Map<String,Object>> addSalvos (@PathVariable Long gamePla
 
         Map <String,Object> salvoDTO = new HashMap<>();
         salvoDTO.put("turn",salvo.getTurn());
+        salvoDTO.put("gp", salvo.getGamePlayer().getPlayer().getId());
         salvoDTO.put("locations",salvo.getLocations());
-
+        if(getHits(salvo) !=null){
+            salvoDTO.put("hittedShips", getHits(salvo)
+                    .stream()
+                    .map(hit-> shipHit(hit,salvo))
+                    .collect(toList()));
+        }
 
         return salvoDTO;
+    }
+
+    private Map<String,Object> shipHit(String hit, Salvo salvo){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        for (Ship ship: getOpponent(salvo.getGamePlayer()).getShip()) {
+            if(ship.getLocations().contains(hit)){
+                dto.put(hit,ship.getType());
+            }
+
+        }
+        return dto;
+    }
+
+    private List<String> getHits (Salvo salvo){
+        GamePlayer enemy = getOpponent(salvo.getGamePlayer());
+        if(enemy != null){
+            List<String> salvoPositions = salvo.getLocations();
+            List<String> shipPositions = ship.getLocations();
+
+            return (salvoPositions.stream()
+                    .filter(salvos->shipPositions.contains(salvos))
+                    .collect(Collectors.toList()));
+        }
+        else return null;
+
     }
 
     private GamePlayer getOpponent (GamePlayer gamePlayer){
@@ -343,7 +378,6 @@ public ResponseEntity <Map<String,Object>> addSalvos (@PathVariable Long gamePla
         //Login
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(@RequestBody Player player) {
-
 
         if ( player.getUserName().isEmpty() || player.getPassword().isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
