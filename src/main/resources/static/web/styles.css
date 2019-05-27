@@ -34,9 +34,12 @@ td {
     background-color: rgba(12, 9, 249, 0.84);  
 }
 
-.mysalvo {
-    
+.mysalvo { 
     background-color: darkgreen;
+}
+
+.shot{
+    background-color: yellow;
 }
 
 
